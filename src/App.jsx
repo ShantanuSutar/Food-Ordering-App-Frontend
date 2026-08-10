@@ -7,6 +7,7 @@ import { ThemeProvider } from '@emotion/react'
 import { darkTheme } from './components/Theme/DarkTheme'
 import { Navbar } from './components/Navbar/Navbar'
 import { CssBaseline } from '@mui/material'
+import { Home } from './components/Home/Home'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -16,6 +17,7 @@ function App() {
       <ThemeProvider theme={darkTheme}>
         <CssBaseline/>
         <Navbar />
+        <Home/>
       </ThemeProvider>
     </>
   )
