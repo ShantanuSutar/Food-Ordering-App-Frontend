@@ -1,10 +1,14 @@
 import React from "react";
 import "./Home.css";
+
 import { MultiItemCarousel } from "./MultiItemCarousel";
+import { restaurants } from "./Restaurants";
+import { RestaurantCard } from "../Restaurant/RestaurantCard";
+
 
 export const Home = () => {
   return (
-    <div>
+    <div className=" pb-10">
       <section className="banner relative flex flex-col justify-center items-center">
         <div className="w-[50vw] z-10 text-center">
           <p className="text-2xl lg:text-6xl font-bold z-10 py-5">
@@ -22,14 +26,14 @@ export const Home = () => {
       </section>
 
         <section className=" p-10 lg:py-10 lg:px-20">
-          <p className=" text-2xl font-semibold text-gray-400 py-3 pb-10">Top Meals</p>
+          <h1 className=" text-2xl font-semibold text-gray-400 pb-8 pt-10">Top Meals</h1>
             <MultiItemCarousel/>
         </section>
 
         <section className=" px-5 lg:px-20">
-          <h1 className=" text-2xl font-semibold text-gray-400 py-3">Order from our handpicked favourites</h1>
-          <div>
-            
+          <h1 className=" text-2xl font-semibold text-gray-400 pb-8 pt-10">Order from our handpicked favourites</h1>
+          <div className=" flex flex-wrap items-center justify-around gap-5">
+            {restaurants.map((item) => <RestaurantCard item={item} />)}  
           </div>
         </section>
     </div>
