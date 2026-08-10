@@ -9,6 +9,7 @@ import { Navbar } from './components/Navbar/Navbar'
 import { CssBaseline } from '@mui/material'
 import { Home } from './components/Home/Home'
 import RestaurantDetails from './components/Restaurant/RestaurantDetails'
+import Cart from './components/Cart/Cart'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -19,7 +20,8 @@ function App() {
         <CssBaseline/>
         <Navbar />
         {/* <Home/> */}
-        <RestaurantDetails/>
+        {/* <RestaurantDetails/> */}
+        <Cart/>
       </ThemeProvider>
     </>
   )
