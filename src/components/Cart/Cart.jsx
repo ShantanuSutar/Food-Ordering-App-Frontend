@@ -8,7 +8,7 @@ import * as Yup from "yup"
 
 const items = [1, 1];
 
-const style = {
+export const style = {
   position: 'absolute',
   top:'50%',
   left: '50%',
