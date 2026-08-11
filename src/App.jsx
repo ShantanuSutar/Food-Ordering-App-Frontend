@@ -11,6 +11,7 @@ import { Home } from './components/Home/Home'
 import RestaurantDetails from './components/Restaurant/RestaurantDetails'
 import Cart from './components/Cart/Cart'
 import Profile from './components/Profile/Profile'
+import CustomerRoute from './routers/CustomerRoute'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -23,7 +24,8 @@ function App() {
         {/* <Home/> */}
         {/* <RestaurantDetails/> */}
         {/* <Cart/> */}
-        <Profile/>
+        {/* <Profile/> */}
+        <CustomerRoute/>
       </ThemeProvider>
     </>
   )
