@@ -3,7 +3,7 @@ import { Field, Formik, Form} from 'formik'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { registerUser } from '../State/Authentication/Action'
+import { registerUser } from '../../State/Authentication/Action'
 
 const initialValues = {
   fullName: "",

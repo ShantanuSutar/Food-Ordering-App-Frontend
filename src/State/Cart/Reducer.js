@@ -1,6 +1,6 @@
 // Reducers.js
 
-import { LOGOUT } from "../../Authentication/ActionType";
+import { LOGOUT } from "../Authentication/ActionTypes";
 import * as actionTypes from "./ActionTypes";
 
 const initialState = {

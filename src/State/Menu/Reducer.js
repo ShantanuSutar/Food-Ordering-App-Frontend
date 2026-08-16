@@ -1,5 +1,5 @@
 // Reducers.js
-import * as actionTypes from "./ActionType";
+import * as actionTypes from "./ActionTypes";
 
 const initialState = {
     menuItems: [],

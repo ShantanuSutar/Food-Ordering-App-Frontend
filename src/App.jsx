@@ -13,7 +13,7 @@ import Cart from './components/Cart/Cart'
 import Profile from './components/Profile/Profile'
 import CustomerRoute from './routers/CustomerRoute'
 import { useDispatch, useSelector } from 'react-redux'
-import { getUser } from './components/State/Authentication/Action'
+import { getUser } from './State/Authentication/Action'
 
 function App() {
 

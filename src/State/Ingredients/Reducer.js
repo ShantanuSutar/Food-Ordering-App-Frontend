@@ -14,7 +14,7 @@ const initialState = {
 
 export const ingredientReducer = (state = initialState, action) => {
     switch (action.type) {
-        case GET_INGREDIENTSf:
+        case GET_INGREDIENTS:
             return {
                 ...state,
                 ingredients: action.payload,
