@@ -1,6 +1,6 @@
 import axios from "axios"
 import { ADD_TO_FAVOURITE_FAILURE, ADD_TO_FAVOURITE_REQUEST, ADD_TO_FAVOURITE_SUCCESS, GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS } from "./ActionTypes"
-import { api, API_URL } from "../../config/api"
+import { api, API_URL } from "../../components/config/api";
 
 export const registerUser = (reqData) => async(dispatch) => {
     dispatch({type : REGISTER_REQUEST})
