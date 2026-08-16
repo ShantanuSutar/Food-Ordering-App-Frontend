@@ -19,7 +19,7 @@ export const RestaurantCard = ({ item }) => {
 
     const handleAddToFavourite = () => {
         console.log("item ", item)
-        dispatch(addToFavourites({restaurantId: item?.Id, jwt}))
+        dispatch(addToFavourites({restaurantId: item?.id, jwt}))
     }
     
   return (

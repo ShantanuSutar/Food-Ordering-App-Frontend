@@ -4,7 +4,7 @@ export const isPresentinFavourites = (favourites, restaurant) => {
         console.log("asd", item)
         console.log("restauratn", restaurant)
 
-        if(restaurant.Id == item.id){
+        if(restaurant.id == item.id){
             return true;
         }
     }
