@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllRestaurantsAction } from "../../State/Restaurant/Action";
 import { store } from "../../State/store";
 import { useNavigate } from "react-router-dom";
+import { findCart } from "../../State/Cart/Action";
 
 
 export const Home = () => {

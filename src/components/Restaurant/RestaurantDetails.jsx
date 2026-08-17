@@ -15,7 +15,7 @@ const foodTypes = [
     { label: "Seasonal", value: "seasonal" },
 ]
 
-const menu = [1, 1, 1, 1, 1, 1, 1];
+// const menu = [1, 1, 1, 1, 1, 1, 1];
 
 const RestaurantDetails = () => {
     const [foodType, setFoodType] = useState("all");
@@ -26,12 +26,20 @@ const RestaurantDetails = () => {
     const jwt = localStorage.getItem("jwt")
 
     const { auth, restaurant, menu } = useSelector(store => store)
+    const [selectedCategory, setSelectedCategory] = useState(null);
 
     const { id } = useParams();
 
     const handleFilter = (e) => {
+        setFoodType(e.target.value)
         console.log(e.target.value, e.target.name)
     }
+
+    const handleFilterCategory = (e, value) => {
+        setSelectedCategory(value)
+        console.log(e.target.value, e.target.name)
+    }
+
 
     console.log("restaurant", restaurant)
 
@@ -39,8 +47,12 @@ const RestaurantDetails = () => {
     useEffect(() => {
         dispatch(getRestaurantById({ jwt, restaurantId: id }))
         dispatch(getRestaurantsCategory({jwt, restaurantId: id}))
-        dispatch(getMenuItemsByRestaurantId({jwt, restaurantId: id, vegetarian: false, nonveg: false, seasonal: false, foodCategory: ""}))
+        
     }, [])
+
+    useEffect(() => {
+        dispatch(getMenuItemsByRestaurantId({jwt, restaurantId: id, vegetarian: foodType == "vegetarian", nonveg: foodType == "non_vegetarian", seasonal: foodType == "seasonal", foodCategory: selectedCategory}))
+    },[selectedCategory, foodType])
 
     return (
         <div className=' px-5 lg:px-20'>
@@ -102,8 +114,10 @@ const RestaurantDetails = () => {
                             <Typography variant='h5' sx={{ paddingBottom: "1rem" }}>Food Category</Typography>
 
                             <FormControl className=' py-10 space-y-5' component={"fieldset"}>
-                                <RadioGroup name='food_type' value={foodType} onChange={handleFilter}>
-                                    {restaurant?.categories?.map((item) => <FormControlLabel key={item.id} value={item} control={<Radio />} label={item.name} />)}
+                                <RadioGroup name='food_category'
+                                 value={selectedCategory}
+                                  onChange={handleFilterCategory}>
+                                    {restaurant?.categories?.map((item) => <FormControlLabel key={item.id} value={item.name} control={<Radio />} label={item.name} />)}
                                 </RadioGroup>
                             </FormControl>
                         </div>

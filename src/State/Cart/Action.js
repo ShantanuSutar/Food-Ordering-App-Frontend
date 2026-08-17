@@ -34,10 +34,12 @@ export const findCart = (token) => {
                 },
             });
 
+            console.log("my cart", response.data)
             dispatch({
                 type: FIND_CART_SUCCESS,
                 payload: response.data,
             });
+
         } catch (error) {
             console.log("find cart error ", error);
 
