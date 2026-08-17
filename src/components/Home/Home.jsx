@@ -7,6 +7,7 @@ import { RestaurantCard } from "../Restaurant/RestaurantCard";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllRestaurantsAction } from "../../State/Restaurant/Action";
 import { store } from "../../State/store";
+import { useNavigate } from "react-router-dom";
 
 
 export const Home = () => {
@@ -17,6 +18,8 @@ export const Home = () => {
   useEffect(() => {
     dispatch(getAllRestaurantsAction(jwt))
   }, [])
+
+  
 
   return (
     <div className=" pb-10">
