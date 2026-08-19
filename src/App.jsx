@@ -15,6 +15,7 @@ import CustomerRoute from './routers/CustomerRoute'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUser } from './State/Authentication/Action'
 import { findCart } from './State/Cart/Action'
+import { Routers } from './routers/Routers'
 
 function App() {
 
@@ -23,20 +24,27 @@ function App() {
   const { auth } = useSelector(store => store);
 
   useEffect(() => {
-    dispatch(getUser(auth.jwt || jwt))
-    dispatch(findCart(jwt))
-  }, [auth.jwt])
+    const token = auth?.jwt || jwt;
+
+    if (token) {
+      dispatch(getUser(token));
+      dispatch(findCart(token));
+    }
+  }, [auth?.jwt]);
+
+
 
   return (
     <>
       <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
-        <Navbar />
+        {/* <CssBaseline />
+        <Navbar /> */}
         {/* <Home/> */}
         {/* <RestaurantDetails/> */}
         {/* <Cart/> */}
         {/* <Profile/> */}
-        <CustomerRoute />
+        {/* <CustomerRoute /> */}
+        <Routers/>
       </ThemeProvider>
     </>
   )

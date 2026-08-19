@@ -11,7 +11,7 @@ import { PaymentSuccess } from '../components/PaymentSuccess/PaymentSuccess'
 const CustomerRoute = () => {
   return (
     <div>
-        {/* <Navbar/> */}
+        <Navbar/>
         <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/account/:register' element={<Home />} />
