@@ -3,6 +3,7 @@ import { AddPhotoAlternate, Close } from '@mui/icons-material';
 
 import { useFormik } from 'formik'
 import React, { useState } from 'react'
+import { uploadImageToCloudinary } from '../util/UploadToCloudinary';
 
 const initialValues = {
   name: "",
@@ -49,12 +50,31 @@ export const CreateRestaurantForm = () => {
     }
   });
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
 
-  }
+    if (!file) return;
+
+    try {
+        setUploadImage(true);
+
+        const image = await uploadImageToCloudinary(file);
+
+        formik.setFieldValue("images", [
+            ...formik.values.images,
+            image
+        ]);
+    } catch (error) {
+        console.error("Image upload failed:", error);
+    } finally {
+        setUploadImage(false);
+    }
+};
 
   const handleRemoveImage = (index) => {
-
+    const updatedImages = [...formik.values.images]
+    updatedImages.splice(index, 1);
+    formik.setFieldValue("images", updatedImages)
   }
 
   return (
@@ -92,11 +112,11 @@ export const CreateRestaurantForm = () => {
                 </div>
 
                 {/* Images */}
-                {[1, 1, 1, 1].map((image, index) => (
+                {formik.values.images.map((image, index) => (
                   <div key={index} className="relative w-24 h-24">
                     <img
                       className="w-24 h-24 object-cover rounded-md"
-                      src="https://images.pexels.com/photos/1639562/pexels-photo-1639562.jpeg"
+                      src={image}
                       alt=""
                     />
 

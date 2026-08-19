@@ -139,7 +139,7 @@ export const RestaurantDetails = () => {
                       <span className=' pr-5'>-</span>
                       <a href="/">
                         <InstagramIcon sx={{fontSize: "3rem"}} />
-                      </a>
+                      </a>c
                       <a href="/">
                         <TwitterIcon sx={{fontSize: "3rem"}} />
                       </a>
