@@ -13,7 +13,7 @@ export const MenuTable = () => {
     <Box>
       <Card className=' mt-1'>
         <CardHeader action={
-            <IconButton onClick={() => navigate("/admin/restaurants/add-menu")} aria-label='settings'>
+            <IconButton onClick={() => navigate("/admin/restaurant/add-menu")} aria-label='settings'>
                 <CreateIcon />
             </IconButton>
         } title={"Menu"} sx={{ paddingTop: 2, alignItems: "center" }} />

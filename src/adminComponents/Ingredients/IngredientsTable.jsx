@@ -4,6 +4,7 @@ import CreateIcon from "@mui/icons-material/Create"
 import { Delete } from '@mui/icons-material'
 import { CreateFoodCategoryForm } from '../FoodCategory/CreateFoodCategoryForm'
 import { CreateIngredientForm } from './CreateIngredientForm'
+import { useDispatch, useSelector } from 'react-redux'
 
 const style = {
   position: 'absolute',
@@ -20,6 +21,10 @@ const style = {
 const orders = [1, 1, 1, 1]
 
 export const IngredientsTable = () => {
+
+  const dispatch = useDispatch();
+  const jwt = localStorage.getItem("jwt")
+  const {restaurant, ingredients} = useSelector(store => store)
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);

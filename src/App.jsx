@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getUser } from './State/Authentication/Action'
 import { findCart } from './State/Cart/Action'
 import { Routers } from './routers/Routers'
+import { getRestaurantByUserId } from './State/Restaurant/Action'
 
 function App() {
 
@@ -32,6 +33,10 @@ function App() {
     }
   }, [auth?.jwt]);
 
+  useEffect(() => {
+    dispatch(getRestaurantByUserId(auth.jwt || jwt))
+    
+  }, [auth.user])
 
 
   return (

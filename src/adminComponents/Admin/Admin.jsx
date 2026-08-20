@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { AdminSidebar } from './AdminSidebar'
 import { Route, Routes } from 'react-router-dom'
 import { RestaurantDashboard } from '../Dashboard/Dashboard'
@@ -9,11 +9,27 @@ import { Ingredients } from '../Ingredients/Ingredients'
 import { Events } from '../Events/Events'
 import { RestaurantDetails } from './RestaurantDetails'
 import { CreateMenuForm } from '../Menu/CreateMenuForm'
+import { useDispatch } from 'react-redux'
+import { getRestaurantById, getRestaurantsCategory } from '../../State/Restaurant/Action'
+import { getMenuItemsByRestaurantId } from '../../State/Menu/Action'
+import { fetchRestaurantsOrder } from '../../State/Restaurant Order/Action'
 
 export const Admin = () => {
+  
+  const {restaurant} = useSelector(store => store)
+  const dispatch = useDispatch();
+  const jwt = localStorage.getItem("jwt")
+
   const handleClose = () => {
 
   }
+
+  useEffect(() => {
+    dispatch(getRestaurantsCategory({jwt, restaurantId: restaurant.usersRestaurant?.id}))
+    dispatch(fetchRestaurantsOrder({jwt, restaurantId: restaurant.usersRestaurant?.id}))
+    // dispatch(getMenuItemsByRestaurantId())
+    // dispatch(getRestaurantById())
+  }, [])
 
   return (
     <div>
