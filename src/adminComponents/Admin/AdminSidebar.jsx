@@ -27,7 +27,7 @@ export const AdminSidebar = ({handleClose}) => {
         if(item.title == "Logout"){
             navigate("/")
             dispatch(logout())
-            handleClose()
+            handleClose()   
         }
     }
     return (

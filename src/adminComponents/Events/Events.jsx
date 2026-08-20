@@ -4,6 +4,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs';
 
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { createEventAction } from '../../State/Restaurant/Action';
 
 const style = {
   position: 'absolute',
@@ -20,6 +22,10 @@ const style = {
 
 
 export const Events = () => {
+  const dispatch = useDispatch();
+  const jwt = localStorage.getItem("jwt")
+  const { restaurant } = useSelector(store => store)
+
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -44,6 +50,8 @@ export const Events = () => {
         ? formValues.endsAt.format("MMMM D, YYYY hh:mm A")
         : null
     };
+
+    dispatch(createEventAction({data, restaurantId: restaurant.usersRestaurant?.id, jwt}))
 
     console.log(data);
   };

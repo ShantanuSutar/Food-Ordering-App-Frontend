@@ -1,7 +1,19 @@
+import { Grid } from '@mui/material'
 import React from 'react'
+import { MenuTable } from '../Menu/MenuTable'
+import { OrderTable } from '../Orders/OrderTable'
 
 export const RestaurantDashboard = () => {
   return (
-    <div>Dashboard</div>
+    <div>
+      <Grid container spacing={2}>
+        <Grid size={{xs: 12, lg: 6}}>
+          <MenuTable/>
+        </Grid>
+        <Grid size={{xs: 12, lg: 6}}>
+          <OrderTable/>
+        </Grid>
+      </Grid>
+    </div>
   )
 }
