@@ -39,7 +39,7 @@ const validationSchema = Yup.object().shape({
 const Cart = () => {
 
   const [open, setOpen] = useState(false);
-  const {cart} = useSelector(store => store);
+  const {auth, cart} = useSelector(store => store);
   const dispatch = useDispatch();
 
   const handleClose = () => {
@@ -84,7 +84,7 @@ const Cart = () => {
             <div className=' space-y-3'>
               <div className=' flex justify-between text-gray-400'>
                 <p>Item Total</p>
-                <p>₹{cart.cart.total}</p>
+                <p>₹{cart?.cart?.total}</p>
               </div>
               <div className=' flex justify-between text-gray-400'>
                 <p>Delivery Fee</p>
@@ -107,7 +107,7 @@ const Cart = () => {
           <div>
             <h1 className=' text-center font-semibold text-2xl py-10'>Choose Delivery Address</h1>
             <div className=' flex gap-5 flex-wrap justify-center'>
-              {[1, 1, 1].map((item) => <AddressCard handleSelectAddress={createOrderUsingSelectedAddress} item={item} showButton={true} />)}
+              {/* {[1, 1, 1].map((item) => <AddressCard handleSelectAddress={createOrderUsingSelectedAddress} item={item} showButton={true} />)} */}
                   <Card className=' flex gap-5 w-64 p-5'>
                     <AddLocationAlt/>
                     <div className=' space-y-3 text-gray-500'>

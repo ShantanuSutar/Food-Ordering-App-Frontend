@@ -25,24 +25,47 @@ export const createMenuItem = ({ menu, jwt }) => {
 
 export const getMenuItemsByRestaurantId = (reqData) => {
     return async (dispatch) => {
-        dispatch({ type: GET_MENU_ITEMS_BY_RESTAURANT_ID_REQUEST });
+
+        dispatch({
+            type: GET_MENU_ITEMS_BY_RESTAURANT_ID_REQUEST
+        });
+
         try {
-            const { data } = await api.get(
-                `/api/food/restaurant/${reqData.restaurantId}?vegetarian=${reqData.vegetarian}&nonveg=${reqData.nonveg}&seasonal=${reqData.seasonal}&food_category=${reqData.foodCategory}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${reqData.jwt}`,
-                    },
-                }
-            );
-            console.log("menu item by restaurants ", data);
-            dispatch({ type: GET_MENU_ITEMS_BY_RESTAURANT_ID_SUCCESS, payload: data });
+
+            let url =
+                `/api/food/restaurant/${reqData.restaurantId}` +
+                `?vegetarian=${reqData.vegetarian}` +
+                `&nonveg=${reqData.nonveg}` +
+                `&seasonal=${reqData.seasonal}`;
+
+            if (reqData.foodCategory) {
+                url += `&food_category=${reqData.foodCategory}`;
+            }
+
+            const { data } = await api.get(url, {
+                headers: {
+                    Authorization: `Bearer ${reqData.jwt}`,
+                },
+            });
+
+            console.log("menu item by restaurants", data);
+
+            dispatch({
+                type: GET_MENU_ITEMS_BY_RESTAURANT_ID_SUCCESS,
+                payload: data
+            });
+
         } catch (error) {
-            console.log("catch error ", error);
-            dispatch({ type: GET_MENU_ITEMS_BY_RESTAURANT_ID_FAILURE, payload: error });
+
+            console.log("catch error", error);
+
+            dispatch({
+                type: GET_MENU_ITEMS_BY_RESTAURANT_ID_FAILURE,
+                payload: error
+            });
         }
-    }
-}
+    };
+};
 
 export const searchMenuItem = ({ keyword, jwt }) => {
     return async (dispatch) => {

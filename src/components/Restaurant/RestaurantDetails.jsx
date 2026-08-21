@@ -46,13 +46,13 @@ const RestaurantDetails = () => {
 
     useEffect(() => {
         dispatch(getRestaurantById({ jwt, restaurantId: id }))
-        dispatch(getRestaurantsCategory({jwt, restaurantId: id}))
-        
+        dispatch(getRestaurantsCategory({ jwt, restaurantId: id }))
+
     }, [])
 
     useEffect(() => {
-        dispatch(getMenuItemsByRestaurantId({jwt, restaurantId: id, vegetarian: foodType == "vegetarian", nonveg: foodType == "non_vegetarian", seasonal: foodType == "seasonal", foodCategory: selectedCategory}))
-    },[selectedCategory, foodType])
+        dispatch(getMenuItemsByRestaurantId({ jwt, restaurantId: id, vegetarian: foodType == "vegetarian", nonveg: foodType == "non_vegetarian", seasonal: foodType == "seasonal", foodCategory: selectedCategory }))
+    }, [selectedCategory, foodType])
 
     return (
         <div className=' px-5 lg:px-20'>
@@ -80,17 +80,44 @@ const RestaurantDetails = () => {
                     </Grid>
                 </div>
 
-                <div className=' pt-3 pb-5'>
-                    <h1 className=' text-4xl font-semibold'>{restaurant?.restaurant?.name}</h1>
-                    <p className=' text-gray-500 mt-1'>{restaurant?.restaurant?.description}</p>
-                    <div className=' space-y-3 mt-3'>
-                        <p className=' text-gray-500 flex items-center gap-3'>
+                <div className='pt-3 pb-5'>
+                    <h1 className='text-4xl font-semibold'>
+                        {restaurant?.restaurant?.name}
+                    </h1>
+
+                    <p className='text-gray-500 mt-1'>
+                        {restaurant?.restaurant?.description}
+                    </p>
+
+                    <div className='space-y-3 mt-3'>
+
+                        <p className='text-gray-500 flex items-center gap-3'>
                             <LocationOnIcon />
-                            <span>Mumbai, Maharashtra</span>
+                            <span>
+                                {restaurant?.restaurant?.address?.city},{" "}
+                                {restaurant?.restaurant?.address?.stateProvince},{" "}
+                                {restaurant?.restaurant?.address?.country}
+                            </span>
                         </p>
-                        <p className=' text-gray-500 flex items-center gap-3'>
+
+                        <p className='text-gray-500 flex items-center gap-3'>
                             <CalendarTodayIcon />
-                            <span>Mon-Sum: 9:00AM - 9:00PM (Today)</span>
+                            <span>
+                                {restaurant?.restaurant?.openingHours}
+                            </span>
+                        </p>
+
+                        <p className='text-gray-500'>
+                            Status:{" "}
+                            <span
+                                className={
+                                    restaurant?.restaurant?.open
+                                        ? "text-green-600"
+                                        : "text-red-600"
+                                }
+                            >
+                                {restaurant?.restaurant?.open ? "Open" : "Closed"}
+                            </span>
                         </p>
 
                     </div>
@@ -115,8 +142,8 @@ const RestaurantDetails = () => {
 
                             <FormControl className=' py-10 space-y-5' component={"fieldset"}>
                                 <RadioGroup name='food_category'
-                                 value={selectedCategory}
-                                  onChange={handleFilterCategory}>
+                                    value={selectedCategory}
+                                    onChange={handleFilterCategory}>
                                     {restaurant?.categories?.map((item) => <FormControlLabel key={item.id} value={item.name} control={<Radio />} label={item.name} />)}
                                 </RadioGroup>
                             </FormControl>
@@ -124,7 +151,7 @@ const RestaurantDetails = () => {
                     </div>
                 </div>
                 <div className=' space-y-5 lg:w-[80%] lg:pl-10'>
-                    {menu?.menuItems?.map((item) => <MenuCard item={item}/>)}
+                    {menu?.menuItems?.map((item) => <MenuCard item={item} />)}
                 </div>
             </section>
         </div>

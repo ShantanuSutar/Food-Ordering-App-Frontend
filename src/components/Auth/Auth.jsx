@@ -5,6 +5,7 @@ import {style} from "../Cart/Cart"
 import RegisterForm from './RegisterForm';
 import LoginForm from './LoginForm';
 
+
 const Auth = () => {
     const location = useLocation();
     const navigate = useNavigate();
