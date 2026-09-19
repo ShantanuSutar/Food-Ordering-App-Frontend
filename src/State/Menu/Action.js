@@ -1,4 +1,5 @@
 import { api } from "../../components/config/api";
+import { getApiErrorMessage, notifyError, notifySuccess } from "../../components/util/toast";
 
 
 import {
@@ -34,11 +35,12 @@ export const createMenuItem = ({ menu, jwt }) => {
                         Authorization: `Bearer ${jwt}`,
                     },
                 });
-            console.log("created menu", data);
             dispatch({ type: CREATE_MENU_ITEM_SUCCESS, payload: data });
+            notifySuccess("Menu item created", "menu-create");
         } catch (error) {
-            console.log("catch error ", error);
-            dispatch({ type: CREATE_MENU_ITEM_FAILURE, payload: error });
+            const message = getApiErrorMessage(error, "Could not create menu item");
+            dispatch({ type: CREATE_MENU_ITEM_FAILURE, payload: message });
+            notifyError(error, "Could not create menu item", "menu-create");
         }
     }
 }
@@ -68,21 +70,18 @@ export const getMenuItemsByRestaurantId = (reqData) => {
                 },
             });
 
-            console.log("menu item by restaurants", data);
-
             dispatch({
                 type: GET_MENU_ITEMS_BY_RESTAURANT_ID_SUCCESS,
                 payload: data
             });
 
         } catch (error) {
-
-            console.log("catch error", error);
-
+            const message = getApiErrorMessage(error, "Could not load menu");
             dispatch({
                 type: GET_MENU_ITEMS_BY_RESTAURANT_ID_FAILURE,
-                payload: error
+                payload: message
             });
+            notifyError(error, "Could not load menu", `menu-load-${reqData.restaurantId}`);
         }
     };
 };
@@ -110,13 +109,15 @@ export const searchMenuItem = ({ keyword, jwt }) => {
                 payload: { keyword: normalizedKeyword, items: data }
             });
         } catch (error) {
+            const message = getApiErrorMessage(error, "Could not load search results");
             dispatch({
                 type: SEARCH_MENU_ITEM_FAILURE,
                 payload: {
                     keyword: normalizedKeyword,
-                    message: error.response?.data?.message || "Search is unavailable right now."
+                    message
                 }
             });
+            notifyError(error, "Could not load search results", "food-search");
         }
     };
 };
@@ -152,7 +153,6 @@ export const getTopMeals = () => {
 // },
 //     }
 // );
-// console.log("menu item by restaurants ", data);
 // dispatch(getMenuItems By RestaurantIdSuccess(data)):
 
 
@@ -169,11 +169,12 @@ export const updateMenuItemsAvailability = ({ foodId, jwt }) => {
                     },
                 }
             );
-            console.log("update menuItems Availability ", data);
             dispatch({ type: UPDATE_MENU_ITEMS_AVAILABILITY_SUCCESS, payload: data });
+            notifySuccess(data?.available ? "Item marked available" : "Item marked unavailable", `menu-availability-${foodId}`);
         } catch (error) {
-            dispatch({ type: UPDATE_MENU_ITEMS_AVAILABILITY_FAILURE, payload: error });
-            console.log("error", error)
+            const message = getApiErrorMessage(error, "Could not update availability");
+            dispatch({ type: UPDATE_MENU_ITEMS_AVAILABILITY_FAILURE, payload: message });
+            notifyError(error, "Could not update availability", `menu-availability-${foodId}`);
         }
     }
 }
@@ -183,14 +184,16 @@ export const deleteFoodAction = ({ foodId, jwt }) =>
     async (dispatch) => {
         dispatch({ type: DELETE_MENU_ITEM_REQUEST });
         try {
-            const { data } = await api.delete(`/api/admin/food/${foodId}`, {
+            await api.delete(`/api/admin/food/${foodId}`, {
                 headers: {
                     Authorization: `Bearer ${jwt}`,
                 },
             });
-            console.log("delete food ", data);
             dispatch({ type: DELETE_MENU_ITEM_SUCCESS, payload: foodId });
+            notifySuccess("Menu item deleted", `menu-delete-${foodId}`);
         } catch (error) {
-            dispatch({ type: DELETE_MENU_ITEM_FAILURE, payload: error });
+            const message = getApiErrorMessage(error, "Could not delete menu item");
+            dispatch({ type: DELETE_MENU_ITEM_FAILURE, payload: message });
+            notifyError(error, "Could not delete menu item", `menu-delete-${foodId}`);
         }
     }

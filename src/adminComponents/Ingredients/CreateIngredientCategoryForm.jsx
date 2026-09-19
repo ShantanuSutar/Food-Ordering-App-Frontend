@@ -1,5 +1,5 @@
 import { Button, TextField } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { createIngredientCategory } from '../../State/Ingredients/Action';
 
@@ -16,7 +16,6 @@ export const CreateIngredientCategoryForm = () => {
             restaurantId: restaurant.usersRestaurant.id
         }
         dispatch(createIngredientCategory({data, jwt}))
-        console.log(formData)
     }
     
 

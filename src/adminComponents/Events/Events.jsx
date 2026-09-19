@@ -1,8 +1,6 @@
 import { Box, Button, Grid, Modal, TextField } from '@mui/material'
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import dayjs from 'dayjs';
-
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { createEventAction } from '../../State/Restaurant/Action';
@@ -51,9 +49,8 @@ export const Events = () => {
         : null
     };
 
-    dispatch(createEventAction({data, restaurantId: restaurant.usersRestaurant?.id, jwt}))
+    dispatch(createEventAction({reqData: data, restaurantId: restaurant.usersRestaurant?.id, jwt}))
 
-    console.log(data);
   };
 
   const handleFormChange = (e) => {

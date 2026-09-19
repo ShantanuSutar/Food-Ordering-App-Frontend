@@ -1,21 +1,12 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useEffect } from 'react'
 import './App.css'
 import { ThemeProvider } from '@emotion/react'
 import { darkTheme } from './components/Theme/DarkTheme'
-import { Navbar } from './components/Navbar/Navbar'
 import { CssBaseline } from '@mui/material'
-import { Home } from './components/Home/Home'
-import RestaurantDetails from './components/Restaurant/RestaurantDetails'
-import Cart from './components/Cart/Cart'
-import Profile from './components/Profile/Profile'
-import CustomerRoute from './routers/CustomerRoute'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUser } from './State/Authentication/Action'
 import { findCart } from './State/Cart/Action'
-import { Toaster, toast } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import { Routers } from './routers/Routers'
 import { getRestaurantByUserId } from './State/Restaurant/Action'
 
@@ -23,7 +14,7 @@ function App() {
 
   const dispatch = useDispatch();
   const jwt = localStorage.getItem("jwt");
-  const { auth, cart, restaurant, menu, order } = useSelector(store => store);
+  const auth = useSelector((store) => store.auth);
 
   useEffect(() => {
     const token = auth?.jwt || jwt;
@@ -31,36 +22,38 @@ function App() {
       dispatch(getUser(token));
       dispatch(findCart(token));
     }
-  }, [auth?.jwt]);
+  }, [auth?.jwt, dispatch, jwt]);
 
   useEffect(() => {
-    dispatch(getRestaurantByUserId(auth.jwt || jwt))
-  }, [auth.user])
-
-  useEffect(() => {
-    if (auth?.error) toast.error(auth.error.toString());
-    if (auth?.success) toast.success(auth.success.toString());
-  }, [auth?.error, auth?.success]);
-
-  useEffect(() => {
-    if (cart?.error) toast.error(cart.error.toString());
-    if (cart?.success) toast.success(cart.success.toString());
-  }, [cart?.error, cart?.success]);
-
-  useEffect(() => {
-    if (menu?.error) toast.error(menu.error.toString());
-    if (menu?.message) toast.success(menu.message.toString());
-  }, [menu?.error, menu?.message]);
-
-  useEffect(() => {
-    if (restaurant?.error) toast.error(restaurant.error.toString());
-  }, [restaurant?.error]);
+    const token = auth?.jwt || jwt;
+    if (token && auth?.user?.role === "ROLE_RESTAURANT_OWNER") {
+      dispatch(getRestaurantByUserId(token));
+    }
+  }, [auth?.jwt, auth?.user?.role, dispatch, jwt])
 
   return (
     <>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <Toaster position="top-center" reverseOrder={false} />
+        <Toaster
+          position="top-center"
+          reverseOrder={false}
+          gutter={10}
+          containerStyle={{ zIndex: 20000 }}
+          toastOptions={{
+            duration: 3200,
+            style: {
+              background: '#17131c',
+              color: '#f8f7fa',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: '14px',
+              boxShadow: '0 16px 45px rgba(0,0,0,0.38)',
+              padding: '12px 16px',
+            },
+            success: { iconTheme: { primary: '#ec407a', secondary: '#17131c' } },
+            error: { iconTheme: { primary: '#ff6b6b', secondary: '#17131c' } },
+          }}
+        />
         <Routers/>
       </ThemeProvider>
     </>

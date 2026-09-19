@@ -1,4 +1,5 @@
 import { api } from "../../components/config/api";
+import { getApiErrorMessage, notifyError, notifySuccess } from "../../components/util/toast";
 import { GET_RESTAURANTS_ORDER_FAILURE, GET_RESTAURANTS_ORDER_REQUEST, GET_RESTAURANTS_ORDER_SUCCESS, UPDATE_ORDER_STATUS_FAILURE, UPDATE_ORDER_STATUS_REQUEST, UPDATE_ORDER_STATUS_SUCCESS } from "./ActionTypes";
 
 export const updateOrderStatus = ({ orderId, orderStatus, jwt }) => {
@@ -18,20 +19,19 @@ export const updateOrderStatus = ({ orderId, orderStatus, jwt }) => {
 
             const updatedOrder = response.data;
 
-            console.log("updated order ", updatedOrder);
-
             dispatch({
                 type: UPDATE_ORDER_STATUS_SUCCESS,
                 payload: updatedOrder,
             });
+            notifySuccess("Order status updated", `order-status-${orderId}`);
 
         } catch (error) {
-            console.log("catch error ", error);
-
+            const message = getApiErrorMessage(error, "Could not update order status");
             dispatch({
                 type: UPDATE_ORDER_STATUS_FAILURE,
-                error: error,
+                payload: message,
             });
+            notifyError(error, "Could not update order status", `order-status-${orderId}`);
         }
     };
 }; 
@@ -60,20 +60,17 @@ export const fetchRestaurantsOrder = ({
                 }
             );
 
-            const orders = data;
-
-            console.log("restaurants order ------ ", orders);
-
             dispatch({
                 type: GET_RESTAURANTS_ORDER_SUCCESS,
-                payload: orders,
+                payload: data,
             });
 
         } catch (error) {
             dispatch({
                 type: GET_RESTAURANTS_ORDER_FAILURE,
-                error: error,
+                payload: getApiErrorMessage(error, "Could not load restaurant orders"),
             });
+            notifyError(error, "Could not load restaurant orders", "restaurant-orders-load");
         }
     };
 };

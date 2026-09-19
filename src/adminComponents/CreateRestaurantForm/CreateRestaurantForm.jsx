@@ -2,10 +2,11 @@ import { Button, CircularProgress, Grid, IconButton, TextField } from '@mui/mate
 import { AddPhotoAlternate, Close } from '@mui/icons-material';
 
 import { useFormik } from 'formik'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { uploadImageToCloudinary } from '../util/UploadToCloudinary';
 import { useDispatch } from 'react-redux';
 import { createRestaurant } from '../../State/Restaurant/Action';
+import { notifyError } from '../../components/util/toast';
 
 const initialValues = {
   name: "",
@@ -51,7 +52,6 @@ export const CreateRestaurantForm = () => {
         openingHours: values.openingHours,
         images: values.images
       }
-      console.log("data " , data)
       dispatch(createRestaurant({data, token: jwt}))
     }
   });
@@ -71,7 +71,7 @@ export const CreateRestaurantForm = () => {
             image
         ]);
     } catch (error) {
-        console.error("Image upload failed:", error);
+        notifyError(error, "Could not upload image", "restaurant-image-upload");
     } finally {
         setUploadImage(false);
     }

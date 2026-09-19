@@ -1,12 +1,13 @@
-import { Box, Button, Chip, CircularProgress, FormControl, formControlClasses, Grid, IconButton, InputLabel, MenuItem, OutlinedInput, Select, TextField } from '@mui/material';
+import { Box, Button, Chip, CircularProgress, FormControl, Grid, IconButton, InputLabel, MenuItem, OutlinedInput, Select, TextField } from '@mui/material';
 import { AddPhotoAlternate, Close } from '@mui/icons-material';
 
 import { useFormik } from 'formik'
-import React, { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { uploadImageToCloudinary } from '../util/UploadToCloudinary';
 import { useDispatch, useSelector } from 'react-redux';
 import { createMenuItem } from '../../State/Menu/Action';
 import { getIngredientsOfRestaurant } from '../../State/Ingredients/Action';
+import { notifyError } from '../../components/util/toast';
 
 const initialValues = {
     name: "",
@@ -27,14 +28,13 @@ export const CreateMenuForm = () => {
     const dispatch = useDispatch();
     const jwt = localStorage.getItem("jwt")
     const { restaurant, ingredients } = useSelector(store => store)
+    const restaurantId = restaurant.usersRestaurant?.id
 
     const [uploadImage, setUploadImage] = useState(false)
     const formik = useFormik({
         initialValues,
         onSubmit: (values) => {
-            values.restaurantId = 2
-            dispatch(createMenuItem({ menu: values, jwt }))
-            console.log("data ", values)
+            dispatch(createMenuItem({ menu: { ...values, restaurantId }, jwt }))
         }
     });
 
@@ -53,15 +53,17 @@ export const CreateMenuForm = () => {
                 image
             ]);
         } catch (error) {
-            console.error("Image upload failed:", error);
+            notifyError(error, "Could not upload image", "menu-image-upload");
         } finally {
             setUploadImage(false);
         }
     };
 
     useEffect(() => {
-        dispatch(getIngredientsOfRestaurant({ jwt, id: restaurant.usersRestaurant.id }))
-    }, [])
+        if (restaurantId) {
+            dispatch(getIngredientsOfRestaurant({ jwt, id: restaurantId }))
+        }
+    }, [dispatch, jwt, restaurantId])
 
     const handleRemoveImage = (index) => {
         const updatedImages = [...formik.values.images]
@@ -172,7 +174,7 @@ export const CreateMenuForm = () => {
                                     )}
                                 // MenuProps={MenuProps}
                                 >
-                                    {ingredients?.ingredients?.map((item, index) => (
+                                    {ingredients?.ingredients?.map((item) => (
                                         <MenuItem
                                             key={item.id}
                                             value={item}

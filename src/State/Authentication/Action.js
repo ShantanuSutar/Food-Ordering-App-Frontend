@@ -1,6 +1,7 @@
 import axios from "axios"
 import { ADD_TO_FAVOURITE_FAILURE, ADD_TO_FAVOURITE_REQUEST, ADD_TO_FAVOURITE_SUCCESS, GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS } from "./ActionTypes"
 import { api, API_URL } from "../../components/config/api";
+import { getApiErrorMessage, notifyError, notifySuccess } from "../../components/util/toast";
 
 export const registerUser = (reqData) => async(dispatch) => {
     dispatch({type : REGISTER_REQUEST})
@@ -13,11 +14,12 @@ export const registerUser = (reqData) => async(dispatch) => {
             reqData.navigate("/")
         }
         dispatch({type: REGISTER_SUCCESS, payload: data.jwt})
-        console.log("register success")
+        notifySuccess("Account created", "auth-register");
 
     } catch (error) {
-        dispatch({type: REGISTER_FAILURE, payload: error})
-        console.log("error", error)
+        const message = getApiErrorMessage(error, "Could not create account");
+        dispatch({type: REGISTER_FAILURE, payload: message})
+        notifyError(error, "Could not create account", "auth-register");
     }
 }
 
@@ -33,10 +35,11 @@ export const loginUser = (reqData) => async(dispatch) => {
             reqData.navigate("/")
         }
         dispatch({type: LOGIN_SUCCESS, payload: data.jwt})
-        console.log("login success", data)
+        notifySuccess("Welcome back", "auth-login");
     } catch (error) {
-        dispatch({type: LOGIN_FAILURE, payload: error})
-        console.log("error", error)
+        const message = getApiErrorMessage(error, "Could not sign in");
+        dispatch({type: LOGIN_FAILURE, payload: message})
+        notifyError(error, "Could not sign in", "auth-login");
     }
 }
 
@@ -50,17 +53,17 @@ export const getUser = (jwt) => async(dispatch) => {
             }
         })
         dispatch({type: GET_USER_SUCCESS, payload: data})
-        console.log("get user success", data)
     } catch (error) {
-        dispatch({type: GET_USER_FAILURE, payload: error})
-        console.log("error", error)
+        dispatch({type: GET_USER_FAILURE, payload: getApiErrorMessage(error, "Could not load profile")})
+        notifyError(error, "Could not load profile", "profile-load");
     }
 }
 
 
 
-export const addToFavourites = ({restaurantId, jwt}) => async(dispatch) => {
+export const addToFavourites = ({restaurantId, jwt}) => async(dispatch, getState) => {
     dispatch({type : ADD_TO_FAVOURITE_REQUEST})
+    const wasFavourite = getState().auth.favourites?.some((item) => item.id === restaurantId);
     try {
         const {data} = await api.put(`/api/restaurants/${restaurantId}/add-favourites`, {}, {
             headers: {
@@ -68,10 +71,11 @@ export const addToFavourites = ({restaurantId, jwt}) => async(dispatch) => {
             }
         })
         dispatch({type: ADD_TO_FAVOURITE_SUCCESS, payload: data})
-        console.log("ADD TO FAVOURITE success")
+        notifySuccess(wasFavourite ? "Removed from favourites" : "Added to favourites", `favourite-${restaurantId}`);
     } catch (error) {
-        dispatch({type: ADD_TO_FAVOURITE_FAILURE, payload: error})
-        console.log("error", error)
+        const message = getApiErrorMessage(error, "Could not update favourites");
+        dispatch({type: ADD_TO_FAVOURITE_FAILURE, payload: message})
+        notifyError(error, "Could not update favourites", `favourite-${restaurantId}`);
     }
 }
 
@@ -79,9 +83,9 @@ export const logout = () => async(dispatch) => {
     try {
         localStorage.clear();
         dispatch({type: LOGOUT})
-        console.log("logout success")
+        notifySuccess("Logged out", "auth-logout");
     } catch (error) {
-        console.log("error", error)
+        notifyError(error, "Could not log out", "auth-logout");
     }
 }
 

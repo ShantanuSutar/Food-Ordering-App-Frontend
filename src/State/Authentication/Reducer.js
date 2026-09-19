@@ -1,4 +1,3 @@
-import { isPresentinFavourites } from "../../components/config/logic";
 import { ADD_TO_FAVOURITE_FAILURE, ADD_TO_FAVOURITE_REQUEST, ADD_TO_FAVOURITE_SUCCESS, GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS } from "./ActionTypes";
 
 const initialState = {
@@ -20,8 +19,9 @@ export const authReducer = (state = initialState, action) => {
             return { ...state, isLoading: true, error: null, success: null }
 
         case REGISTER_SUCCESS:
+            return { ...state, isLoading: false, jwt: action.payload, success: "Account created" }
         case LOGIN_SUCCESS:
-            return { ...state, isLoading: false, jwt: action.payload, success: "Register success" }
+            return { ...state, isLoading: false, jwt: action.payload, success: "Welcome back" }
         case GET_USER_SUCCESS:
             return { ...state, isLoading: false, user: action.payload, favourites: action.payload.favourites }
         case ADD_TO_FAVOURITE_SUCCESS: {
@@ -53,4 +53,4 @@ export const authReducer = (state = initialState, action) => {
         default:
             return state;
     }
-}  
+}

@@ -1,4 +1,5 @@
 import { api } from "../../components/config/api";
+import { getApiErrorMessage, notifyError, notifySuccess } from "../../components/util/toast";
 
 import { CREATE_CATEGORY_FAILURE, CREATE_CATEGORY_REQUEST, CREATE_CATEGORY_SUCCESS, CREATE_EVENTS_FAILURE, CREATE_EVENTS_REQUEST, CREATE_EVENTS_SUCCESS, CREATE_RESTAURANT_FAILURE, CREATE_RESTAURANT_REQUEST, CREATE_RESTAURANT_SUCCESS, DELETE_EVENTS_FAILURE, DELETE_EVENTS_REQUEST, DELETE_EVENTS_SUCCESS, DELETE_RESTAURANT_FAILURE, DELETE_RESTAURANT_REQUEST, DELETE_RESTAURANT_SUCCESS, GET_ALL_EVENTS_FAILURE, GET_ALL_EVENTS_REQUEST, GET_ALL_EVENTS_SUCCESS, GET_ALL_RESTAURANTS_FAILURE, GET_ALL_RESTAURANTS_REQUEST, GET_ALL_RESTAURANTS_SUCCESS, GET_RESTAURANTS_EVENTS_FAILURE, GET_RESTAURANTS_EVENTS_REQUEST, GET_RESTAURANTS_EVENTS_SUCCESS, GET_RESTAURANT_BY_ID_FAILURE, GET_RESTAURANT_BY_ID_REQUEST, GET_RESTAURANT_BY_ID_SUCCESS, GET_RESTAURANT_BY_USER_ID_FAILURE, GET_RESTAURANT_BY_USER_ID_REQUEST, GET_RESTAURANT_BY_USER_ID_SUCCESS, GET_RESTAURANTS_CATEGORY_FAILURE, GET_RESTAURANTS_CATEGORY_REQUEST, GET_RESTAURANTS_CATEGORY_SUCCESS, UPDATE_RESTAURANT_FAILURE, UPDATE_RESTAURANT_REQUEST, UPDATE_RESTAURANT_STATUS_FAILURE, UPDATE_RESTAURANT_STATUS_REQUEST, UPDATE_RESTAURANT_STATUS_SUCCESS, UPDATE_RESTAURANT_SUCCESS } from "./ActionTypes";
 
@@ -12,10 +13,10 @@ export const getAllRestaurantsAction = (token) => {
                 },
             });
             dispatch({type: GET_ALL_RESTAURANTS_SUCCESS, payload: data});
-            console.log("all restaurant ", data);
         } catch (error) {
-            console.log("error", error)
-            dispatch({type: GET_ALL_RESTAURANTS_FAILURE, payload: error})
+            const message = getApiErrorMessage(error, "Could not load restaurants");
+            dispatch({type: GET_ALL_RESTAURANTS_FAILURE, payload: message})
+            notifyError(error, "Could not load restaurants", "restaurants-load");
         };
     }
 }
@@ -30,10 +31,10 @@ export const getRestaurantById = (reqData) => {
                 },
             });
             dispatch({type: GET_RESTAURANT_BY_ID_SUCCESS, payload: data});
-            console.log(" restaurant ", data);
         } catch (error) {
-            console.log("error", error)
-            dispatch({type: GET_RESTAURANT_BY_ID_FAILURE, payload: error})
+            const message = getApiErrorMessage(error, "Could not load restaurant");
+            dispatch({type: GET_RESTAURANT_BY_ID_FAILURE, payload: message})
+            notifyError(error, "Could not load restaurant", `restaurant-load-${reqData.restaurantId}`);
         };
     }
 }
@@ -43,16 +44,16 @@ export const getRestaurantByUserId = (jwt) => {
     return async (dispatch) => {
         dispatch({ type: GET_RESTAURANT_BY_USER_ID_REQUEST });
         try {
-            const { data } = await api.get(`/api/admin/restaurants/user}`, {
+            const { data } = await api.get(`/api/admin/restaurants/user`, {
                 headers: {
                     Authorization: `Bearer ${jwt}`,
                 },
             });
             dispatch({type: GET_RESTAURANT_BY_USER_ID_SUCCESS, payload: data});
-            console.log(" restaurant ", data);
         } catch (error) {
-            console.log("error", error)
-            dispatch({type: GET_RESTAURANT_BY_USER_ID_FAILURE, payload: error})
+            const message = getApiErrorMessage(error, "Could not load your restaurant");
+            dispatch({type: GET_RESTAURANT_BY_USER_ID_FAILURE, payload: message})
+            notifyError(error, "Could not load your restaurant", "owner-restaurant-load");
         };
     }
 }
@@ -68,10 +69,11 @@ export const createRestaurant = (reqData) => {
                 },
             });
             dispatch({type: CREATE_RESTAURANT_SUCCESS, payload: data});
-            console.log(" restaurant ", data);
+            notifySuccess("Restaurant created", "restaurant-create");
         } catch (error) {
-            console.log("error", error)
-            dispatch({type: CREATE_RESTAURANT_FAILURE, payload: error})
+            const message = getApiErrorMessage(error, "Could not create restaurant");
+            dispatch({type: CREATE_RESTAURANT_FAILURE, payload: message})
+            notifyError(error, "Could not create restaurant", "restaurant-create");
         };
     }
 }
@@ -88,10 +90,11 @@ export const updateRestaurant = ({ restaurantId, restaurantData, jwt}) => {
                 },
             });
             dispatch({type: UPDATE_RESTAURANT_SUCCESS, payload: data});
-            console.log(" restaurant ", data);
+            notifySuccess("Restaurant updated", `restaurant-update-${restaurantId}`);
         } catch (error) {
-            console.log("error", error)
-            dispatch({type: UPDATE_RESTAURANT_FAILURE, payload: error})
+            const message = getApiErrorMessage(error, "Could not update restaurant");
+            dispatch({type: UPDATE_RESTAURANT_FAILURE, payload: message})
+            notifyError(error, "Could not update restaurant", `restaurant-update-${restaurantId}`);
         };
     }
 }
@@ -100,16 +103,17 @@ export const deleteRestaurant = ({ restaurantId, jwt}) => {
     return async (dispatch) => {
         dispatch({ type: DELETE_RESTAURANT_REQUEST });
         try {
-            const { data } = await api.delete(`/api/admin/restaurants/${restaurantId}`, {
+            await api.delete(`/api/admin/restaurants/${restaurantId}`, {
                 headers: {
                     Authorization: `Bearer ${jwt}`,
                 },
             });
-            dispatch({type: DELETE_RESTAURANT_SUCCESS, payload: data});
-            console.log(" delete restaurant ", data);
+            dispatch({type: DELETE_RESTAURANT_SUCCESS, payload: restaurantId});
+            notifySuccess("Restaurant deleted", `restaurant-delete-${restaurantId}`);
         } catch (error) {
-            console.log("error", error)
-            dispatch({type: DELETE_RESTAURANT_FAILURE, payload: error})
+            const message = getApiErrorMessage(error, "Could not delete restaurant");
+            dispatch({type: DELETE_RESTAURANT_FAILURE, payload: message})
+            notifyError(error, "Could not delete restaurant", `restaurant-delete-${restaurantId}`);
         };
     }
 }
@@ -125,10 +129,11 @@ export const updateRestaurantStatus = ({ restaurantId, jwt}) => {
                 },
             });
             dispatch({type: UPDATE_RESTAURANT_STATUS_SUCCESS, payload: data});
-            console.log(" delete restaurant ", data);
+            notifySuccess(data?.open ? "Restaurant opened" : "Restaurant closed", `restaurant-status-${restaurantId}`);
         } catch (error) {
-            console.log("error", error)
-            dispatch({type: UPDATE_RESTAURANT_STATUS_FAILURE, payload: error})
+            const message = getApiErrorMessage(error, "Could not update restaurant status");
+            dispatch({type: UPDATE_RESTAURANT_STATUS_FAILURE, payload: message})
+            notifyError(error, "Could not update restaurant status", `restaurant-status-${restaurantId}`);
         };
     }
 }
@@ -144,10 +149,11 @@ export const createEventAction = ({ reqData, jwt, restaurantId}) => {
                 },
             });
             dispatch({type: CREATE_EVENTS_SUCCESS, payload: data});
-            console.log(" delete restaurant ", data);
+            notifySuccess("Event created", "event-create");
         } catch (error) {
-            console.log("error", error)
-            dispatch({type: CREATE_EVENTS_FAILURE, payload: error})
+            const message = getApiErrorMessage(error, "Could not create event");
+            dispatch({type: CREATE_EVENTS_FAILURE, payload: message})
+            notifyError(error, "Could not create event", "event-create");
         };
     }
 }
@@ -162,10 +168,8 @@ export const getAllEvents = ({ jwt}) => {
                 },
             });
             dispatch({type: GET_ALL_EVENTS_SUCCESS, payload: data});
-            console.log(" delete restaurant ", data);
         } catch (error) {
-            console.log("error", error)
-            dispatch({type: GET_ALL_EVENTS_FAILURE, payload: error})
+            dispatch({type: GET_ALL_EVENTS_FAILURE, payload: getApiErrorMessage(error, "Could not load events")})
         };
     }
 }
@@ -175,16 +179,17 @@ export const deleteEventAction = ({ eventId, jwt}) => {
     return async (dispatch) => {
         dispatch({ type: DELETE_EVENTS_REQUEST });
         try {
-            const { data } = await api.delete(`/api/admin/events/${eventId}`, {
+            await api.delete(`/api/admin/events/${eventId}`, {
                 headers: {
                     Authorization: `Bearer ${jwt}`,
                 },
             });
-            dispatch({type: DELETE_EVENTS_SUCCESS, payload: data});
-            console.log(" delete events ", data);
+            dispatch({type: DELETE_EVENTS_SUCCESS, payload: eventId});
+            notifySuccess("Event deleted", `event-delete-${eventId}`);
         } catch (error) {
-            console.log("error", error)
-            dispatch({type: DELETE_EVENTS_FAILURE, payload: error})
+            const message = getApiErrorMessage(error, "Could not delete event");
+            dispatch({type: DELETE_EVENTS_FAILURE, payload: message})
+            notifyError(error, "Could not delete event", `event-delete-${eventId}`);
         };
     }
 }
@@ -200,10 +205,8 @@ export const getRestaurantsEvents = ({ restaurantId, jwt}) => {
                 },
             });
             dispatch({type: GET_RESTAURANTS_EVENTS_SUCCESS, payload: data});
-            console.log(" get res events ", data);
         } catch (error) {
-            console.log("error", error)
-            dispatch({type: GET_RESTAURANTS_EVENTS_FAILURE, payload: error})
+            dispatch({type: GET_RESTAURANTS_EVENTS_FAILURE, payload: getApiErrorMessage(error, "Could not load events")})
         };
     }
 }
@@ -219,10 +222,11 @@ export const createCategoryAction = ({ reqData, jwt}) => {
                 },
             });
             dispatch({type: CREATE_CATEGORY_SUCCESS, payload: data});
-            console.log(" get res events ", data);
+            notifySuccess("Category created", "category-create");
         } catch (error) {
-            console.log("error", error)
-            dispatch({type: CREATE_CATEGORY_FAILURE, payload: error})
+            const message = getApiErrorMessage(error, "Could not create category");
+            dispatch({type: CREATE_CATEGORY_FAILURE, payload: message})
+            notifyError(error, "Could not create category", "category-create");
         };
     }
 }
@@ -238,10 +242,9 @@ export const getRestaurantsCategory = ({ jwt, restaurantId}) => {
                 },
             });
             dispatch({type: GET_RESTAURANTS_CATEGORY_SUCCESS, payload: data});
-            console.log(" get res category ", data);
         } catch (error) {
-            console.log("error", error)
-            dispatch({type: GET_RESTAURANTS_CATEGORY_FAILURE, payload: error})
+            dispatch({type: GET_RESTAURANTS_CATEGORY_FAILURE, payload: getApiErrorMessage(error, "Could not load categories")})
+            notifyError(error, "Could not load categories", `categories-load-${restaurantId}`);
         };
     }
 }

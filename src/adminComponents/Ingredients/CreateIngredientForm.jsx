@@ -1,7 +1,7 @@
 import { Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { createIngredient, createIngredientCategory } from '../../State/Ingredients/Action';
+import { createIngredient } from '../../State/Ingredients/Action';
 
 export const CreateIngredientForm = () => {
 
@@ -19,7 +19,6 @@ export const CreateIngredientForm = () => {
             restaurantId: restaurant.usersRestaurant.id
         }
         dispatch(createIngredient({data, jwt}))
-        console.log(data)
     }
 
     const handleInputChange = (e) => {

@@ -1,7 +1,6 @@
 import Card from '@mui/material/Card'
 import Chip from '@mui/material/Chip'
 import IconButton from '@mui/material/IconButton'
-import React from 'react'
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +21,6 @@ export const RestaurantCard = ({ item }) => {
     }
     
     const handleNavigateToRestaurant = () => {
-        console.log("item ", item)
         if(item.open){
             navigate(`/restaurant/${item.address.city}/${item.name}/${item.id}`)
         }
@@ -30,7 +28,7 @@ export const RestaurantCard = ({ item }) => {
     
   return (
     <Card className='w-[18rem]'>
-        <div className={` ${true ? "cursor-pointer" : "cursor-not-allowed"} relative`}>
+        <div className={` ${item.open ? "cursor-pointer" : "cursor-not-allowed"} relative`}>
             <img className=' w-full h-[10rem] rounded-t-md object-cover' src={item?.images[0]} alt="" />
             <Chip size='small' className=' absolute top-2 left-2' color={item?.open ? "success" : "error"} label={item?.open  ? "open" : "closed"} />
         </div>

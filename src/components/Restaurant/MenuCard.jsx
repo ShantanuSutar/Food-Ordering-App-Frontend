@@ -1,22 +1,9 @@
 import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, FormControlLabel, FormGroup } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { categorizeIngredients } from '../util/categorizeIngredients';
 import { useDispatch } from 'react-redux';
 import { addItemToCart } from '../../State/Cart/Action';
-
-const demo = [
-  {
-    category: "Nuts and Seeds",
-    ingredients: ["Cashews"]
-  },
-  {
-    category: "Protein",
-    ingredients: ["Ground Beef", "Bacon Strips"]
-  }
-]
-
-
 
 const MenuCard = ({ item }) => {
 
@@ -44,7 +31,6 @@ const MenuCard = ({ item }) => {
     }
 
     dispatch(addItemToCart(reqData))
-    console.log("req data", reqData)
   }
 
   return (
@@ -59,7 +45,7 @@ const MenuCard = ({ item }) => {
                 <img className='  w-[7rem] h-[7rem] object-cover' src={item.images[0]} alt="" />
                 <div className=' space-y-1 lg:space-y-5 lg:max-w-2xl'>
                   <p className=' font-semibold text-xl'>{item.name}</p>
-                  <p>₹499</p>
+                  <p>₹{item.price}</p>
                   <p className=' text-gray-400'>{item.description}</p>
                 </div>
               </div>
@@ -69,17 +55,17 @@ const MenuCard = ({ item }) => {
           <form onSubmit={handleAddItemToCart}>
             <div className=' flex gap-5 flex-wrap '>
               {
-                Object.keys(categorizeIngredients(item.ingredients)).map((category) => <div>
+                Object.keys(categorizeIngredients(item.ingredients)).map((category) => <div key={category}>
                   <p>{category}</p>
                   <FormGroup>
-                    {categorizeIngredients(item.ingredients)[category].map((item, i) => <FormControlLabel key={item.id} control={<Checkbox onChange={() => handleCheckBoxChange(item.name)} />} label={item.name} />)}
+                    {categorizeIngredients(item.ingredients)[category].map((item) => <FormControlLabel key={item.id} control={<Checkbox onChange={() => handleCheckBoxChange(item.name)} />} label={item.name} />)}
                   </FormGroup>
                 </div> )
               }
             </div>
             <div className=' pt-5'>
-              <Button variant='contained' disabled={false} type='submit'>
-                {true ? "Add to Cart" : "Out of stock"}
+              <Button variant='contained' disabled={!item.available} type='submit'>
+                {item.available ? "Add to Cart" : "Out of stock"}
               </Button>
             </div>
           </form>

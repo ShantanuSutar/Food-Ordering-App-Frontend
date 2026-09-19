@@ -5,7 +5,6 @@ import SearchIcon from '@mui/icons-material/Search'
 import { CircularProgress, IconButton } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-hot-toast'
 
 import { clearMenuSearch, searchMenuItem } from '../../State/Menu/Action'
 
@@ -88,12 +87,6 @@ export const NavbarSearch = () => {
 
     return () => window.clearTimeout(debounceTimer)
   }, [dispatch, jwt, keyword, open])
-
-  useEffect(() => {
-    if (searchError) {
-      toast.error(searchError, { id: 'navbar-food-search-error' })
-    }
-  }, [searchError])
 
   const selectResult = (item) => {
     if (!item.restaurantId) return

@@ -18,8 +18,14 @@ const restaurantReducer = (state = initialState, action) => {
         case actionTypes.DELETE_RESTAURANT_REQUEST:
         case actionTypes.UPDATE_RESTAURANT_REQUEST:
         case actionTypes.GET_RESTAURANT_BY_ID_REQUEST:
+        case actionTypes.GET_RESTAURANT_BY_USER_ID_REQUEST:
+        case actionTypes.UPDATE_RESTAURANT_STATUS_REQUEST:
         case actionTypes.CREATE_CATEGORY_REQUEST:
         case actionTypes.GET_RESTAURANTS_CATEGORY_REQUEST:
+        case actionTypes.CREATE_EVENTS_REQUEST:
+        case actionTypes.DELETE_EVENTS_REQUEST:
+        case actionTypes.GET_ALL_EVENTS_REQUEST:
+        case actionTypes.GET_RESTAURANTS_EVENTS_REQUEST:
             return {
                 ...state,
                 loading: true,
@@ -59,9 +65,9 @@ const restaurantReducer = (state = initialState, action) => {
                 restaurants: state.restaurants.filter(
                     (item) => item.id !== action.payload
                 ),
-                usersRestaurant: state.usersRestaurant.filter(
-                    (item) => item.id !== action.payload
-                ),
+                usersRestaurant: state.usersRestaurant?.id === action.payload
+                    ? null
+                    : state.usersRestaurant,
             };
 
         case actionTypes.CREATE_EVENTS_SUCCESS:
@@ -110,7 +116,12 @@ const restaurantReducer = (state = initialState, action) => {
         case actionTypes.DELETE_RESTAURANT_FAILURE:
         case actionTypes.UPDATE_RESTAURANT_FAILURE:
         case actionTypes.GET_RESTAURANT_BY_ID_FAILURE:
+        case actionTypes.GET_RESTAURANT_BY_USER_ID_FAILURE:
+        case actionTypes.UPDATE_RESTAURANT_STATUS_FAILURE:
         case actionTypes.CREATE_EVENTS_FAILURE:
+        case actionTypes.DELETE_EVENTS_FAILURE:
+        case actionTypes.GET_ALL_EVENTS_FAILURE:
+        case actionTypes.GET_RESTAURANTS_EVENTS_FAILURE:
         case actionTypes.CREATE_CATEGORY_FAILURE:
         case actionTypes.GET_RESTAURANTS_CATEGORY_FAILURE:
             return {
