@@ -7,7 +7,8 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { NavbarSearch } from './NavbarSearch'
 export const Navbar = () => {
-  const {auth, cart} = useSelector(store => store)
+  const auth = useSelector((store) => store.auth)
+  const cart = useSelector((store) => store.cart)
   const navigate = useNavigate();
 
   const handleAvatarClick = () => {
@@ -19,7 +20,7 @@ export const Navbar = () => {
   }
   
   return (
-    <nav className="sticky top-0 z-50 flex items-center justify-between bg-[#e91e63] px-5 py-[0.8rem] lg:px-20">
+    <nav className="sticky top-0 z-[1100] flex min-h-16 w-full min-w-0 items-center justify-between bg-[#e91e63] px-5 py-3 lg:px-20">
       <div className=" lg:mr-10 cursor-pointer flex items-center space-x-4">
           <p onClick={() => navigate("/")} className="logo font-semibold text-gray-300 text-2xl">
               DineHub
@@ -30,7 +31,7 @@ export const Navbar = () => {
           <NavbarSearch />
 
           <div className=''>
-            {auth.user ? <Avatar onClick={handleAvatarClick} sx={{bgcolor:"white", color:pink.A400, cursor: 'pointer'}}>{auth.user?.fullName[0]?.toUpperCase()}</Avatar> : <IconButton onClick={() => navigate("/account/login")}>
+            {auth.user ? <Avatar onClick={handleAvatarClick} sx={{bgcolor:"white", color:pink.A400, cursor: 'pointer'}}>{auth.user?.fullName?.[0]?.toUpperCase()}</Avatar> : <IconButton onClick={() => navigate("/account/login")}>
               <PersonIcon/>
               </IconButton>}
           </div>

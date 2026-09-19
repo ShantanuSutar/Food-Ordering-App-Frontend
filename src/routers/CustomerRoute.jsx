@@ -10,7 +10,7 @@ import { PaymentFailed } from '../components/PaymentSuccess/PaymentFailed'
 import { Search } from '../components/Search/Search'
 const CustomerRoute = () => {
   return (
-    <div>
+    <div className='min-h-svh w-full min-w-0'>
         <Navbar/>
         <Routes>
             <Route path='/' element={<Home />} />

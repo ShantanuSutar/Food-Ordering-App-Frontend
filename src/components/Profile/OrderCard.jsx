@@ -1,19 +1,20 @@
 import { Button, Card } from '@mui/material'
-import React from 'react'
 
-const OrderCard = ({item, order}) => {
+const OrderCard = ({ item, order }) => {
+  const image = item.food?.images?.[0]
+
   return (
-    <Card className=' flex justify-between items-center p-5'>
-        <div className=' flex items-center space-x-5'>
-            <img className=' h-16 w-16' src={item.food.images[0]} alt="" />
-            <div>
-                <p>{item.food.name}</p>
-                <p>${item.totalPrice}</p>
-            </div>
+    <Card className='flex min-w-0 flex-col gap-4 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5'>
+      <div className='flex min-w-0 items-center gap-4'>
+        <div className='h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-white/5'>
+          {image && <img className='h-full w-full object-cover' src={image} alt={item.food?.name || 'Ordered food'} />}
         </div>
-        <div>
-            <Button  className=' cursor-not-allowed'>{order.orderStatus}</Button>
+        <div className='min-w-0'>
+          <p className='truncate font-medium text-white'>{item.food?.name || 'Menu item'}</p>
+          <p className='text-sm text-gray-400'>${item.totalPrice}</p>
         </div>
+      </div>
+      <Button className='self-start sm:self-auto'>{order.orderStatus}</Button>
     </Card>
   )
 }

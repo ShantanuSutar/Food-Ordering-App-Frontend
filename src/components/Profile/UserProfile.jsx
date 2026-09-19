@@ -1,21 +1,35 @@
-import React from 'react'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import { Button } from '@mui/material'
+import { Button, Card } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { logout } from '../../State/Authentication/Action'
 
 const UserProfile = () => {
-  const handleLogout = () => {
+  const user = useSelector((store) => store.auth.user)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
+  const handleLogout = () => {
+    dispatch(logout())
+    navigate('/')
   }
 
   return (
-    <div className=' min-h-[90vh] flex flex-col justify-center items-center text-center'>
-      <div className=' flex flex-col items-center justify-center'>
-        <AccountCircleIcon sx={{ fontSize: "9rem" }} />
-        <h1 className=' py-5 text-2xl font-semibold'>Shantanu Sutar</h1>
-        <p>Email : shantanu@gmail.com</p>
-        <Button variant='contained' onClick={handleLogout} sx={{ margin: "2rem 0rem" }}>Logout</Button>
-      </div>
-    </div>
+    <section className='space-y-6'>
+      <header>
+        <p className='text-sm font-medium uppercase tracking-[0.18em] text-pink-400'>My profile</p>
+        <h1 className='!m-0 !mt-2 !text-2xl !font-semibold sm:!text-3xl'>Account details</h1>
+      </header>
+
+      <Card className='flex w-full flex-col items-center rounded-2xl border border-white/10 p-6 text-center sm:p-10'>
+        <AccountCircleIcon sx={{ fontSize: { xs: '6rem', sm: '8rem' }, color: 'text.secondary' }} />
+        <h2 className='!mb-1 !mt-4 !text-2xl !font-semibold'>{user?.fullName || 'DineHub customer'}</h2>
+        <p className='break-all text-gray-400'>{user?.email || 'Email unavailable'}</p>
+        <Button variant='outlined' onClick={handleLogout} sx={{ marginTop: '2rem' }}>
+          Logout
+        </Button>
+      </Card>
+    </section>
   )
 }
 
