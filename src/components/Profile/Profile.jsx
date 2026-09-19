@@ -8,6 +8,7 @@ import Orders from './Orders'
 import Address from './Address'
 import Favourites from './Favourites'
 import Events from './Events'
+import Payments from './Payments'
 
 const ProfilePlaceholder = ({ title, message }) => (
   <section className='space-y-6'>
@@ -53,10 +54,7 @@ const Profile = () => {
               <Route path='orders' element={<Orders />} />
               <Route path='address' element={<Address />} />
               <Route path='favourites' element={<Favourites />} />
-              <Route
-                path='payments'
-                element={<ProfilePlaceholder title='Payments' message='No saved payment information is available.' />}
-              />
+              <Route path='payments' element={<Payments />} />
               <Route
                 path='notifications'
                 element={<ProfilePlaceholder title='Notifications' message='You have no notifications right now.' />}

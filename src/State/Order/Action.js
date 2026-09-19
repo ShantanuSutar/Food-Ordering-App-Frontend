@@ -1,6 +1,16 @@
 import { api } from "../../components/config/api";
 import { getApiErrorMessage, notifyError, notifyLoading, notifySuccess } from "../../components/util/toast";
-import { CREATE_ORDER_FAILURE, CREATE_ORDER_REQUEST, CREATE_ORDER_SUCCESS, GET_USERS_ORDERS_FAILURE, GET_USERS_ORDERS_REQUEST, GET_USERS_ORDERS_SUCCESS } from "./ActionTypes";
+import {
+    CREATE_ORDER_FAILURE,
+    CREATE_ORDER_REQUEST,
+    CREATE_ORDER_SUCCESS,
+    GET_PAYMENT_HISTORY_FAILURE,
+    GET_PAYMENT_HISTORY_REQUEST,
+    GET_PAYMENT_HISTORY_SUCCESS,
+    GET_USERS_ORDERS_FAILURE,
+    GET_USERS_ORDERS_REQUEST,
+    GET_USERS_ORDERS_SUCCESS,
+} from "./ActionTypes";
 import { getAddresses } from "../Authentication/Action";
 import { addressKey } from "../../components/util/address";
 // import {
@@ -57,6 +67,25 @@ export const getUsersOrders = (jwt) => {
         } catch (error) {
             dispatch({ type: GET_USERS_ORDERS_FAILURE, payload: getApiErrorMessage(error, "Could not load orders") });
             notifyError(error, "Could not load orders", "orders-load");
+        }
+    };
+}
+
+export const getPaymentHistory = (jwt) => {
+    return async (dispatch) => {
+        dispatch({ type: GET_PAYMENT_HISTORY_REQUEST });
+        try {
+            const { data } = await api.get('/api/users/payments', {
+                headers: {
+                    Authorization: `Bearer ${jwt}`,
+                },
+            });
+            dispatch({ type: GET_PAYMENT_HISTORY_SUCCESS, payload: data });
+            return data;
+        } catch (error) {
+            const message = getApiErrorMessage(error, 'Could not load payment history');
+            dispatch({ type: GET_PAYMENT_HISTORY_FAILURE, payload: message });
+            return null;
         }
     };
 }
