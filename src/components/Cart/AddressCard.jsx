@@ -2,9 +2,10 @@ import { Button, Card, Chip, Radio } from '@mui/material'
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
 import { formatAddress, isAddressComplete } from '../util/address'
 
-const AddressCard = ({ item, selected = false, checkoutDisabled = false, onSelect, onDeliver, onEdit }) => {
+const AddressCard = ({ item, selected = false, checkoutDisabled = false, onSelect, onDeliver, onEdit, onDelete }) => {
   const complete = isAddressComplete(item)
   const selectable = typeof onSelect === 'function'
+  const manageable = typeof onDelete === 'function'
 
   return (
     <Card
@@ -33,7 +34,31 @@ const AddressCard = ({ item, selected = false, checkoutDisabled = false, onSelec
         </div>
         <p className='flex-1 text-sm leading-6'>{formatAddress(item) || 'Address details unavailable'}</p>
         {!complete && <p className='text-xs text-red-400'>This saved address is incomplete.</p>}
-        {(onDeliver || onEdit) && (
+        {manageable ? (
+          <div className='flex gap-2'>
+            <Button
+              variant='outlined'
+              fullWidth
+              onClick={(event) => {
+                event.stopPropagation()
+                onEdit?.(item)
+              }}
+            >
+              Edit
+            </Button>
+            <Button
+              variant='outlined'
+              color='error'
+              fullWidth
+              onClick={(event) => {
+                event.stopPropagation()
+                onDelete(item)
+              }}
+            >
+              Delete
+            </Button>
+          </div>
+        ) : (onDeliver || onEdit) && (
           <Button
             variant={selected ? 'contained' : 'outlined'}
             fullWidth

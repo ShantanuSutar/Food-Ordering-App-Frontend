@@ -1,9 +1,7 @@
 import { useMemo, useState } from 'react'
-import { Box, Button, Card, Divider, Grid, Modal, TextField } from '@mui/material'
+import { Box, Button, Card, Divider, Modal } from '@mui/material'
 import AddLocationAlt from '@mui/icons-material/AddLocationAlt'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
-import { Field, Form, Formik } from 'formik'
-import * as Yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
@@ -13,24 +11,8 @@ import { notifyError, notifySuccess } from '../util/toast'
 import AddressCard from './AddressCard'
 import CartItem from './CartItem'
 import { addressModalStyle } from './modalStyle'
-
-const validationSchema = Yup.object({
-  fullName: Yup.string().trim().required('Full name is required'),
-  streetAddress: Yup.string().trim().required('Street address is required'),
-  city: Yup.string().trim().required('City is required'),
-  state: Yup.string().trim().required('State is required'),
-  postalCode: Yup.string().trim().min(3, 'Postal code is too short').max(12, 'Postal code is too long').required('Postal code is required'),
-  country: Yup.string().trim().required('Country is required'),
-})
-
-const addressFields = [
-  ['fullName', 'Full Name'],
-  ['streetAddress', 'Street Address'],
-  ['city', 'City'],
-  ['state', 'State'],
-  ['postalCode', 'Postal Code'],
-  ['country', 'Country'],
-]
+import AddressForm from '../Address/AddressForm'
+import { addressInitialValues } from '../Address/addressFormConfig'
 
 const addressIdentifier = (address) => address.id ?? addressKey(address)
 
@@ -55,14 +37,10 @@ const Cart = () => {
     0
   ))
 
-  const initialValues = useMemo(() => ({
-    fullName: editingAddress?.fullName || auth.user?.fullName || '',
-    streetAddress: editingAddress?.streetAddress || '',
-    city: editingAddress?.city || '',
-    state: editingAddress?.state || '',
-    postalCode: editingAddress?.postalCode || '',
-    country: editingAddress?.country || 'India',
-  }), [auth.user?.fullName, editingAddress])
+  const initialValues = useMemo(
+    () => addressInitialValues(editingAddress, auth.user?.fullName),
+    [auth.user?.fullName, editingAddress],
+  )
 
   const closeAddressModal = () => {
     setOpen(false)
@@ -228,32 +206,12 @@ const Cart = () => {
           <h2 id='add-address-title' className='mb-5 text-xl font-semibold'>
             {editingAddress ? 'Complete delivery address' : 'Add delivery address'}
           </h2>
-          <Formik enableReinitialize initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-            {({ errors, touched, isSubmitting }) => (
-              <Form>
-                <Grid container spacing={2} sx={{ width: '100%' }}>
-                  {addressFields.map(([name, label]) => (
-                    <Grid key={name} size={{ xs: 12, sm: name === 'city' || name === 'state' ? 6 : 12 }}>
-                      <Field
-                        as={TextField}
-                        name={name}
-                        label={label}
-                        fullWidth
-                        variant='outlined'
-                        error={Boolean(touched[name] && errors[name])}
-                        helperText={touched[name] && errors[name]}
-                      />
-                    </Grid>
-                  ))}
-                  <Grid size={12}>
-                    <Button variant='contained' type='submit' color='primary' fullWidth disabled={isSubmitting || checkoutLoading}>
-                      Continue to payment
-                    </Button>
-                  </Grid>
-                </Grid>
-              </Form>
-            )}
-          </Formik>
+          <AddressForm
+            initialValues={initialValues}
+            onSubmit={handleSubmit}
+            submitLabel='Continue to payment'
+            loading={checkoutLoading}
+          />
         </Box>
       </Modal>
     </>

@@ -1,5 +1,4 @@
-import { addressKey } from "../../components/util/address";
-import { ADD_TO_FAVOURITE_FAILURE, ADD_TO_FAVOURITE_REQUEST, ADD_TO_FAVOURITE_SUCCESS, GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS, UPSERT_SAVED_ADDRESS } from "./ActionTypes";
+import { ADD_TO_FAVOURITE_FAILURE, ADD_TO_FAVOURITE_REQUEST, ADD_TO_FAVOURITE_SUCCESS, ADDRESS_FAILURE, ADDRESS_REQUEST, ADDRESS_SUCCESS, GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS } from "./ActionTypes";
 
 const initialState = {
     user: null,
@@ -7,7 +6,9 @@ const initialState = {
     error: null,
     jwt: null,
     favourites: [],
-    success: null
+    success: null,
+    addressLoading: false,
+    addressError: null,
 };
 
 export const authReducer = (state = initialState, action) => {
@@ -43,34 +44,17 @@ export const authReducer = (state = initialState, action) => {
                     : [restaurant, ...state.favourites]
             };
         }
-        case UPSERT_SAVED_ADDRESS: {
-            if (!state.user || !action.payload) return state;
-            const addresses = state.user.addresses || [];
-            const existingIndex = addresses.findIndex((address) => address.id === action.payload.id);
-            const duplicateIndex = addresses.findIndex((address) =>
-                addressKey(address) === addressKey(action.payload)
-            );
-
-            if (existingIndex >= 0) {
-                return {
-                    ...state,
-                    user: {
-                        ...state.user,
-                        addresses: addresses.map((address, index) =>
-                            index === existingIndex ? action.payload : address
-                        ),
-                    },
-                };
-            }
-
-            return duplicateIndex >= 0 ? state : {
+        case ADDRESS_REQUEST:
+            return { ...state, addressLoading: true, addressError: null };
+        case ADDRESS_SUCCESS:
+            return {
                 ...state,
-                user: {
-                    ...state.user,
-                    addresses: [...addresses, action.payload],
-                },
+                addressLoading: false,
+                addressError: null,
+                user: state.user ? { ...state.user, addresses: action.payload } : state.user,
             };
-        }
+        case ADDRESS_FAILURE:
+            return { ...state, addressLoading: false, addressError: action.payload };
         case LOGOUT:
             return initialState;
         case REGISTER_FAILURE:

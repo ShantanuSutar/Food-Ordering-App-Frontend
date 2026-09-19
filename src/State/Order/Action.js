@@ -1,7 +1,7 @@
 import { api } from "../../components/config/api";
 import { getApiErrorMessage, notifyError, notifyLoading, notifySuccess } from "../../components/util/toast";
 import { CREATE_ORDER_FAILURE, CREATE_ORDER_REQUEST, CREATE_ORDER_SUCCESS, GET_USERS_ORDERS_FAILURE, GET_USERS_ORDERS_REQUEST, GET_USERS_ORDERS_SUCCESS } from "./ActionTypes";
-import { UPSERT_SAVED_ADDRESS } from "../Authentication/ActionTypes";
+import { getAddresses } from "../Authentication/Action";
 import { addressKey } from "../../components/util/address";
 // import {
 //     CREATE_ORDER_REQUEST, GET_USERS_NOTIFICATION_FAILURE, GET_USERS_NOTIFIC
@@ -20,9 +20,7 @@ export const createOrder = (reqData) => {
                 },
             });
             dispatch({ type: CREATE_ORDER_SUCCESS, payload: data });
-            if (data.deliveryAddress) {
-                dispatch({ type: UPSERT_SAVED_ADDRESS, payload: data.deliveryAddress });
-            }
+            await dispatch(getAddresses(reqData.jwt));
             if (reqData.isNewAddress && !addressWasAlreadySaved) {
                 notifySuccess("Address saved", "address-save");
             }
