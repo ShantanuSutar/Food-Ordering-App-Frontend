@@ -37,7 +37,7 @@ export const Navbar = () => {
 
           <div className=''>
             <IconButton onClick={() => navigate("/cart")} >
-              <Badge color='primary' badgeContent={cart?.cart?.items?.length || 0}>
+              <Badge color='primary' badgeContent={cart?.cartItems?.length || 0}>
                 <ShoppingCartIcon sx={{fontSize: "1.5rem"}} />
               </Badge>
             </IconButton>

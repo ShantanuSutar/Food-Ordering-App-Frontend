@@ -40,6 +40,8 @@ export const findCart = (token) => {
                 payload: response.data,
             });
 
+            return response.data;
+
         } catch (error) {
             const message = getApiErrorMessage(error, "Could not load cart");
             dispatch({
@@ -47,6 +49,7 @@ export const findCart = (token) => {
                 payload: message,
             });
             notifyError(error, "Could not load cart", "cart-load");
+            return null;
         }
     };
 };
