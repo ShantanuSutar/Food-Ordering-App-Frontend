@@ -12,7 +12,7 @@ const Profile = () => {
 
   return (
     <div className=' lg:flex justify-between'>
-        <div className=' sticky h-[80vh] lg:w[20%]'>
+        <div className=' sticky h-[80vh] lg:w-[20vw]'>
             <ProfileNavigation open={openSideBar}/>
         </div>
         <div className=' lg:w-[80%]'>

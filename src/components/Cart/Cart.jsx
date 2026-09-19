@@ -46,8 +46,22 @@ const Cart = () => {
     setOpen(false)
   }
 
-  const createOrderUsingSelectedAddress = () => {
-    
+  const createOrderUsingSelectedAddress = (item) => {
+    const data = {
+      jwt: localStorage.getItem("jwt"),
+      order: {
+        restaurantId: cart.cartItems[0].food?.restaurant.id,
+        deliveryAddress: {
+          fullName: auth.user?.fullName,
+          streetAddress: item.streetAddress,
+          city: item.city,
+          state: item.state,
+          postalCode: item.postalCode || item.pincode,
+          country: item.country || "India"
+        }
+      }
+    }
+    dispatch(createOrder(data))
   }
 
   const handleOpenAddressModal = () => {
@@ -107,7 +121,7 @@ const Cart = () => {
           <div>
             <h1 className=' text-center font-semibold text-2xl py-10'>Choose Delivery Address</h1>
             <div className=' flex gap-5 flex-wrap justify-center'>
-              {/* {[1, 1, 1].map((item) => <AddressCard handleSelectAddress={createOrderUsingSelectedAddress} item={item} showButton={true} />)} */}
+              {auth.user?.addresses?.map((item) => <AddressCard handleSelectAddress={createOrderUsingSelectedAddress} item={item} showButton={true} />)}
                   <Card className=' flex gap-5 w-64 p-5'>
                     <AddLocationAlt/>
                     <div className=' space-y-3 text-gray-500'>

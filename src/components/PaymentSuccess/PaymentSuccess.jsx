@@ -4,8 +4,17 @@ import { green } from '@mui/material/colors'
 import { Button, Card } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
+import { useDispatch } from 'react-redux'
+import { clearCartAction } from '../../State/Cart/Action'
+
 export const PaymentSuccess = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    React.useEffect(() => {
+        dispatch(clearCartAction());
+    }, [dispatch]);
+
   return (
     <div className=' min-h-screen px-5'>
         <div className=' flex flex-col items-center justify-center h-[90vh]'>

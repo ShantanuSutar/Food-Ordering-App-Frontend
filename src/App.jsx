@@ -15,6 +15,7 @@ import CustomerRoute from './routers/CustomerRoute'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUser } from './State/Authentication/Action'
 import { findCart } from './State/Cart/Action'
+import { Toaster, toast } from 'react-hot-toast';
 import { Routers } from './routers/Routers'
 import { getRestaurantByUserId } from './State/Restaurant/Action'
 
@@ -22,11 +23,10 @@ function App() {
 
   const dispatch = useDispatch();
   const jwt = localStorage.getItem("jwt");
-  const { auth } = useSelector(store => store);
+  const { auth, cart, restaurant, menu, order } = useSelector(store => store);
 
   useEffect(() => {
     const token = auth?.jwt || jwt;
-
     if (token) {
       dispatch(getUser(token));
       dispatch(findCart(token));
@@ -35,20 +35,32 @@ function App() {
 
   useEffect(() => {
     dispatch(getRestaurantByUserId(auth.jwt || jwt))
-    
   }, [auth.user])
 
+  useEffect(() => {
+    if (auth?.error) toast.error(auth.error.toString());
+    if (auth?.success) toast.success(auth.success.toString());
+  }, [auth?.error, auth?.success]);
+
+  useEffect(() => {
+    if (cart?.error) toast.error(cart.error.toString());
+    if (cart?.success) toast.success(cart.success.toString());
+  }, [cart?.error, cart?.success]);
+
+  useEffect(() => {
+    if (menu?.error) toast.error(menu.error.toString());
+    if (menu?.message) toast.success(menu.message.toString());
+  }, [menu?.error, menu?.message]);
+
+  useEffect(() => {
+    if (restaurant?.error) toast.error(restaurant.error.toString());
+  }, [restaurant?.error]);
 
   return (
     <>
       <ThemeProvider theme={darkTheme}>
-        {/* <CssBaseline />
-        <Navbar /> */}
-        {/* <Home/> */}
-        {/* <RestaurantDetails/> */}
-        {/* <Cart/> */}
-        {/* <Profile/> */}
-        {/* <CustomerRoute /> */}
+        <CssBaseline />
+        <Toaster position="top-center" reverseOrder={false} />
         <Routers/>
       </ThemeProvider>
     </>

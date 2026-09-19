@@ -1,14 +1,35 @@
-import React, { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
+import { useNavigate } from "react-router-dom";
 
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-import { topMeals } from "./TopMeal";
 import { CarouselItem } from "./CarouselItem";
 
-export const MultiItemCarousel = () => {
+const TopMealsSkeleton = () => (
+  <div className="flex overflow-hidden px-6 lg:px-12" aria-label="Loading top meals">
+    {Array.from({ length: 5 }, (_, index) => (
+      <div
+        key={`top-meal-skeleton-${index}`}
+        className="flex-[0_0_100%] px-2 sm:flex-[0_0_50%] md:flex-[0_0_33.333%] lg:flex-[0_0_20%]"
+      >
+        <div className="animate-pulse overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+          <div className="aspect-[4/3] bg-white/10" />
+          <div className="space-y-3 p-4">
+            <div className="h-5 w-3/4 rounded bg-white/10" />
+            <div className="h-4 w-1/2 rounded bg-white/10" />
+            <div className="h-4 w-1/4 rounded bg-white/10" />
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+)
+
+export const MultiItemCarousel = ({ items = [], loading = false, error = null }) => {
+  const navigate = useNavigate();
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       loop: true,
@@ -24,6 +45,10 @@ export const MultiItemCarousel = () => {
     ]
   );
 
+  useEffect(() => {
+    emblaApi?.reInit();
+  }, [emblaApi, items.length]);
+
   const scrollPrev = useCallback(() => {
     if (emblaApi) {
       emblaApi.scrollPrev();
@@ -36,11 +61,33 @@ export const MultiItemCarousel = () => {
     }
   }, [emblaApi]);
 
+  const handleSelectMeal = (item) => {
+    const city = encodeURIComponent(item.restaurantCity || "city");
+    const restaurantName = encodeURIComponent(item.restaurantName || "restaurant");
+
+    navigate(
+      `/restaurant/${city}/${restaurantName}/${item.restaurantId}?food=${item.id}`,
+      { state: { selectedFoodId: item.id } }
+    );
+  };
+
+  if (loading) return <TopMealsSkeleton />;
+
+  if (items.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.03] px-6 py-12 text-center text-gray-400">
+        {error
+          ? "Top meals could not be loaded right now. Please try again later."
+          : "No available meals from open restaurants yet."}
+      </div>
+    );
+  }
+
   return (
     <div className="relative px-6 lg:px-12">
 
       {/* Previous Button */}
-      <button
+      {items.length > 1 && <button
         onClick={scrollPrev}
         className="
           absolute left-1 lg:left-4 top-1/2 -translate-y-1/2 z-20
@@ -58,7 +105,7 @@ export const MultiItemCarousel = () => {
         "
       >
         <ChevronLeftIcon />
-      </button>
+      </button>}
 
       {/* Carousel */}
       <div
@@ -66,9 +113,9 @@ export const MultiItemCarousel = () => {
         className="overflow-hidden"
       >
         <div className="flex">
-          {topMeals.map((item, index) => (
+          {items.map((item) => (
             <div
-              key={index}
+              key={item.id}
               className="
                 min-w-0
                 flex-[0_0_100%]
@@ -79,8 +126,8 @@ export const MultiItemCarousel = () => {
               "
             >
               <CarouselItem
-                image={item.image}
-                title={item.title}
+                item={item}
+                onSelect={() => handleSelectMeal(item)}
               />
             </div>
           ))}
@@ -88,7 +135,7 @@ export const MultiItemCarousel = () => {
       </div>
 
       {/* Next Button */}
-      <button
+      {items.length > 1 && <button
         onClick={scrollNext}
         className="
           absolute right-1 lg:right-4 top-1/2 -translate-y-1/2 z-20
@@ -106,7 +153,7 @@ export const MultiItemCarousel = () => {
         "
       >
         <ChevronRightIcon />
-      </button>
+      </button>}
 
     </div>
   );

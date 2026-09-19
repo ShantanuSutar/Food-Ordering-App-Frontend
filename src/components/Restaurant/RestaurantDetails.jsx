@@ -1,9 +1,9 @@
 import { Divider, FormControl, FormControlLabel, Grid, Radio, RadioGroup, Typography } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import MenuCard from './MenuCard';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getRestaurantById, getRestaurantsCategory } from '../../State/Restaurant/Action';
 import { getMenuItemsByRestaurantId } from '../../State/Menu/Action';
@@ -20,15 +20,17 @@ const foodTypes = [
 const RestaurantDetails = () => {
     const [foodType, setFoodType] = useState("all");
 
-    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const jwt = localStorage.getItem("jwt")
 
-    const { auth, restaurant, menu } = useSelector(store => store)
+    const { restaurant, menu } = useSelector(store => store)
     const [selectedCategory, setSelectedCategory] = useState(null);
 
     const { id } = useParams();
+    const [searchParams] = useSearchParams();
+    const selectedFoodParam = searchParams.get("food");
+    const selectedFoodId = selectedFoodParam ? Number(selectedFoodParam) : null;
 
     const handleFilter = (e) => {
         setFoodType(e.target.value)
@@ -48,11 +50,18 @@ const RestaurantDetails = () => {
         dispatch(getRestaurantById({ jwt, restaurantId: id }))
         dispatch(getRestaurantsCategory({ jwt, restaurantId: id }))
 
-    }, [])
+    }, [dispatch, id, jwt])
 
     useEffect(() => {
         dispatch(getMenuItemsByRestaurantId({ jwt, restaurantId: id, vegetarian: foodType == "vegetarian", nonveg: foodType == "non_vegetarian", seasonal: foodType == "seasonal", foodCategory: selectedCategory }))
-    }, [selectedCategory, foodType])
+    }, [dispatch, foodType, id, jwt, selectedCategory])
+
+    useEffect(() => {
+        if (!selectedFoodId || !menu?.menuItems?.some((item) => item.id === selectedFoodId)) return;
+
+        const selectedMeal = document.getElementById(`food-${selectedFoodId}`);
+        selectedMeal?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, [menu?.menuItems, selectedFoodId]);
 
     return (
         <div className=' px-5 lg:px-20'>
@@ -151,7 +160,17 @@ const RestaurantDetails = () => {
                     </div>
                 </div>
                 <div className=' space-y-5 lg:w-[80%] lg:pl-10'>
-                    {menu?.menuItems?.map((item) => <MenuCard item={item} />)}
+                    {menu?.menuItems?.map((item) => (
+                        <div
+                            id={`food-${item.id}`}
+                            key={item.id}
+                            className={selectedFoodId === item.id
+                                ? "rounded-2xl ring-2 ring-pink-500 ring-offset-4 ring-offset-[#16171d]"
+                                : ""}
+                        >
+                            <MenuCard item={item} />
+                        </div>
+                    ))}
                 </div>
             </section>
         </div>

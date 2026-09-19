@@ -6,6 +6,9 @@ const initialState = {
     loading: false,
     error: null,
     search: [],
+    topMeals: [],
+    topMealsLoading: false,
+    topMealsError: null,
     message: null,
 };
 
@@ -21,6 +24,13 @@ const menuItemReducer = (state = initialState, action) => {
                 loading: true,
                 error: null,
                 message: null,
+            };
+
+        case actionTypes.GET_TOP_MEALS_REQUEST:
+            return {
+                ...state,
+                topMealsLoading: true,
+                topMealsError: null,
             };
 
         case actionTypes.CREATE_MENU_ITEM_SUCCESS:
@@ -66,6 +76,20 @@ const menuItemReducer = (state = initialState, action) => {
                 ...state,
                 loading: false,
                 search: action.payload,
+            };
+
+        case actionTypes.GET_TOP_MEALS_SUCCESS:
+            return {
+                ...state,
+                topMealsLoading: false,
+                topMeals: action.payload,
+            };
+
+        case actionTypes.GET_TOP_MEALS_FAILURE:
+            return {
+                ...state,
+                topMealsLoading: false,
+                topMealsError: action.payload,
             };
 
         case actionTypes.CREATE_MENU_ITEM_FAILURE:

@@ -1,24 +1,22 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import "./Home.css";
 
 import { MultiItemCarousel } from "./MultiItemCarousel";
-import { restaurants } from "./Restaurants";
 import { RestaurantCard } from "../Restaurant/RestaurantCard";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllRestaurantsAction } from "../../State/Restaurant/Action";
-import { store } from "../../State/store";
-import { useNavigate } from "react-router-dom";
-import { findCart } from "../../State/Cart/Action";
+import { getTopMeals } from "../../State/Menu/Action";
 
 
 export const Home = () => {
   const dispatch = useDispatch();
   const jwt = localStorage.getItem("jwt");
-  const {restaurant} = useSelector(store => store)
+  const {restaurant, menu} = useSelector(store => store)
 
   useEffect(() => {
-    dispatch(getAllRestaurantsAction(jwt))
-  }, [])
+    dispatch(getTopMeals())
+    if (jwt) dispatch(getAllRestaurantsAction(jwt))
+  }, [dispatch, jwt])
 
   
 
@@ -42,7 +40,11 @@ export const Home = () => {
 
         <section className=" p-10 lg:py-10 lg:px-20">
           <h1 className=" text-center text-2xl font-semibold text-gray-400 pb-8 pt-10">Top Meals</h1>
-            <MultiItemCarousel/>
+            <MultiItemCarousel
+              items={menu.topMeals}
+              loading={menu.topMealsLoading}
+              error={menu.topMealsError}
+            />
         </section>
 
         <section className=" px-5 lg:px-20">

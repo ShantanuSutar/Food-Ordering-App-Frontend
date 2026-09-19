@@ -11,7 +11,7 @@ const AddressCard = ({item, showButton, handleSelectAddress}) => {
          <div className=' space-y-3 text-gray-500'>
           <h2 className=' font-semibold text-lg text-white'>Home</h2>
           <p>
-            Pune, Laxmi balaji Pg 5, metro food court, 411057, Maharashtra, India 
+            {`${item.streetAddress}, ${item.city}, ${item.state}, ${item.postalCode || item.pincode}, ${item.country}`}
           </p>
           {showButton && (<Button variant='outlined' fullWidth onClick={() => handleSelectAddress(item)}>Select</Button>)}
          </div>
