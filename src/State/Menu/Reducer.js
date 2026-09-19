@@ -6,6 +6,10 @@ const initialState = {
     loading: false,
     error: null,
     search: [],
+    searchQuery: "",
+    searchLoading: false,
+    searchError: null,
+    hasSearched: false,
     topMeals: [],
     topMealsLoading: false,
     topMealsError: null,
@@ -17,13 +21,21 @@ const menuItemReducer = (state = initialState, action) => {
         case actionTypes.CREATE_MENU_ITEM_REQUEST:
         case actionTypes.GET_MENU_ITEMS_BY_RESTAURANT_ID_REQUEST:
         case actionTypes.DELETE_MENU_ITEM_REQUEST:
-        case actionTypes.SEARCH_MENU_ITEM_REQUEST:
         case actionTypes.UPDATE_MENU_ITEMS_AVAILABILITY_REQUEST:
             return {
                 ...state,
                 loading: true,
                 error: null,
                 message: null,
+            };
+
+        case actionTypes.SEARCH_MENU_ITEM_REQUEST:
+            return {
+                ...state,
+                searchQuery: action.payload,
+                searchLoading: true,
+                searchError: null,
+                hasSearched: true,
             };
 
         case actionTypes.GET_TOP_MEALS_REQUEST:
@@ -72,10 +84,30 @@ const menuItemReducer = (state = initialState, action) => {
             };
 
         case actionTypes.SEARCH_MENU_ITEM_SUCCESS:
+            if (action.payload.keyword !== state.searchQuery) return state;
             return {
                 ...state,
-                loading: false,
-                search: action.payload,
+                searchLoading: false,
+                search: action.payload.items,
+            };
+
+        case actionTypes.SEARCH_MENU_ITEM_FAILURE:
+            if (action.payload.keyword !== state.searchQuery) return state;
+            return {
+                ...state,
+                searchLoading: false,
+                searchError: action.payload.message,
+                search: [],
+            };
+
+        case actionTypes.CLEAR_MENU_SEARCH:
+            return {
+                ...state,
+                search: [],
+                searchQuery: "",
+                searchLoading: false,
+                searchError: null,
+                hasSearched: false,
             };
 
         case actionTypes.GET_TOP_MEALS_SUCCESS:
@@ -95,7 +127,6 @@ const menuItemReducer = (state = initialState, action) => {
         case actionTypes.CREATE_MENU_ITEM_FAILURE:
         case actionTypes.GET_MENU_ITEMS_BY_RESTAURANT_ID_FAILURE:
         case actionTypes.DELETE_MENU_ITEM_FAILURE:
-        case actionTypes.SEARCH_MENU_ITEM_FAILURE:
         case actionTypes.UPDATE_MENU_ITEMS_AVAILABILITY_FAILURE:
             return {
                 ...state,

@@ -2,6 +2,7 @@ import { api } from "../../components/config/api";
 
 
 import {
+    CLEAR_MENU_SEARCH,
     CREATE_MENU_ITEM_FAILURE,
     CREATE_MENU_ITEM_REQUEST,
     CREATE_MENU_ITEM_SUCCESS,
@@ -88,20 +89,39 @@ export const getMenuItemsByRestaurantId = (reqData) => {
 
 export const searchMenuItem = ({ keyword, jwt }) => {
     return async (dispatch) => {
-        dispatch({ type: SEARCH_MENU_ITEM_REQUEST });
-        try {
-            const { data } = await api.get(`api/food/search?name=${keyword}`, {
-                headers: {
-                    Authorization: `Bearer ${jwt}`,
-                },
-            });
-            console.log("data data");
-            dispatch({ type: SEARCH_MENU_ITEM_SUCCESS, payload: data });
-        } catch (error) {
-            dispatch({ type: SEARCH_MENU_ITEM_FAILURE, payload: error });
+        const normalizedKeyword = keyword.trim();
+
+        if (!normalizedKeyword) {
+            dispatch({ type: CLEAR_MENU_SEARCH });
+            return;
         }
+
+        dispatch({ type: SEARCH_MENU_ITEM_REQUEST, payload: normalizedKeyword });
+        try {
+            const config = {
+                params: { name: normalizedKeyword },
+                ...(jwt && {
+                    headers: { Authorization: `Bearer ${jwt}` }
+                })
+            };
+            const { data } = await api.get("/api/food/search", config);
+            dispatch({
+                type: SEARCH_MENU_ITEM_SUCCESS,
+                payload: { keyword: normalizedKeyword, items: data }
+            });
+        } catch (error) {
+            dispatch({
+                type: SEARCH_MENU_ITEM_FAILURE,
+                payload: {
+                    keyword: normalizedKeyword,
+                    message: error.response?.data?.message || "Search is unavailable right now."
+                }
+            });
+        }
+    };
 };
-};
+
+export const clearMenuSearch = () => ({ type: CLEAR_MENU_SEARCH });
 
 export const getTopMeals = () => {
     return async (dispatch) => {
