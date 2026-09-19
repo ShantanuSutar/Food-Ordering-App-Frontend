@@ -14,7 +14,7 @@ const initialValues = {
   cuisineType: "",
   streetAddress: "",
   city: "",
-  stateProvince: "",
+  state: "",
   postalCode: "",
   country: "",
   email: "",
@@ -38,8 +38,10 @@ export const CreateRestaurantForm = () => {
         description: values.description,
         cuisineType: values.cuisineType,
         address: {
+          fullName: values.name,
+          streetAddress: values.streetAddress,
           city: values.city,
-          stateProvince: values.stateProvince,
+          state: values.state,
           postalCode: values.postalCode,
           country: values.country
         },
@@ -161,7 +163,7 @@ export const CreateRestaurantForm = () => {
               <TextField fullWidth id='city' name='city' label="City" variant='outlined' onChange={formik.handleChange} value={formik.values.city} />
             </Grid>
             <Grid item size={{ xs: 12, lg: 4 }}>
-              <TextField fullWidth id='stateProvince' name='stateProvince' label="State Province" variant='outlined' onChange={formik.handleChange} value={formik.values.stateProvince} />
+              <TextField fullWidth id='state' name='state' label="State" variant='outlined' onChange={formik.handleChange} value={formik.values.state} />
             </Grid>
             <Grid item size={{ xs: 12, lg: 4 }}>
               <TextField fullWidth id='postalCode' name='postalCode' label="Postal Code" variant='outlined' onChange={formik.handleChange} value={formik.values.postalCode} />

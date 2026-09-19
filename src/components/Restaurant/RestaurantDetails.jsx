@@ -98,7 +98,7 @@ const RestaurantDetails = () => {
                             <LocationOnIcon />
                             <span>
                                 {restaurant?.restaurant?.address?.city},{" "}
-                                {restaurant?.restaurant?.address?.stateProvince},{" "}
+                                {restaurant?.restaurant?.address?.state},{" "}
                                 {restaurant?.restaurant?.address?.country}
                             </span>
                         </p>

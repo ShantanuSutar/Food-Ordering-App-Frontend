@@ -1,20 +1,54 @@
-import React from 'react'
-import Cart from './Cart'
-import { Button, Card } from '@mui/material'
-import HomeIcon from '@mui/icons-material/Home'
+import { Button, Card, Chip, Radio } from '@mui/material'
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
+import { formatAddress, isAddressComplete } from '../util/address'
 
-const AddressCard = ({item, showButton, handleSelectAddress}) => {
-  
+const AddressCard = ({ item, selected = false, checkoutDisabled = false, onSelect, onDeliver, onEdit }) => {
+  const complete = isAddressComplete(item)
+  const selectable = typeof onSelect === 'function'
+
   return (
-    <Card className=' flex gap-5 w-64 p-5'>
-         <HomeIcon/>
-         <div className=' space-y-3 text-gray-500'>
-          <h2 className=' font-semibold text-lg text-white'>Home</h2>
-          <p>
-            {`${item.streetAddress}, ${item.city}, ${item.state}, ${item.postalCode || item.pincode}, ${item.country}`}
-          </p>
-          {showButton && (<Button variant='outlined' fullWidth onClick={() => handleSelectAddress(item)}>Select</Button>)}
-         </div>
+    <Card
+      onClick={() => onSelect?.(item)}
+      className={`flex min-h-56 w-full gap-4 rounded-2xl border p-5 transition-all duration-200 sm:w-72 ${selectable ? 'cursor-pointer' : ''} ${
+        selected
+          ? 'border-pink-500 bg-pink-500/10 shadow-lg shadow-pink-950/30'
+          : 'border-white/10 hover:-translate-y-1 hover:border-pink-400/60 hover:shadow-lg'
+      }`}
+    >
+      <HomeOutlinedIcon color={selected ? 'secondary' : 'inherit'} />
+      <div className='flex min-w-0 flex-1 flex-col gap-3 text-gray-400'>
+        <div className='flex flex-wrap items-center justify-between gap-2'>
+          <h2 className='truncate text-lg font-semibold text-white'>{item.fullName || 'Delivery address'}</h2>
+          {selectable && (
+            <Radio
+              checked={selected}
+              onChange={() => onSelect?.(item)}
+              onClick={(event) => event.stopPropagation()}
+              inputProps={{ 'aria-label': `Select ${item.fullName || 'delivery address'}` }}
+              size='small'
+              color='secondary'
+            />
+          )}
+          {selected && <Chip label='Selected' color='secondary' size='small' />}
+        </div>
+        <p className='flex-1 text-sm leading-6'>{formatAddress(item) || 'Address details unavailable'}</p>
+        {!complete && <p className='text-xs text-red-400'>This saved address is incomplete.</p>}
+        {(onDeliver || onEdit) && (
+          <Button
+            variant={selected ? 'contained' : 'outlined'}
+            fullWidth
+            disabled={checkoutDisabled}
+            onClick={(event) => {
+              event.stopPropagation()
+              onSelect?.(item)
+              if (complete) onDeliver?.(item)
+              else onEdit?.(item)
+            }}
+          >
+            {complete ? 'Deliver here' : 'Complete address'}
+          </Button>
+        )}
+      </div>
     </Card>
   )
 }

@@ -1,4 +1,5 @@
-import { ADD_TO_FAVOURITE_FAILURE, ADD_TO_FAVOURITE_REQUEST, ADD_TO_FAVOURITE_SUCCESS, GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS } from "./ActionTypes";
+import { addressKey } from "../../components/util/address";
+import { ADD_TO_FAVOURITE_FAILURE, ADD_TO_FAVOURITE_REQUEST, ADD_TO_FAVOURITE_SUCCESS, GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS, UPSERT_SAVED_ADDRESS } from "./ActionTypes";
 
 const initialState = {
     user: null,
@@ -40,6 +41,34 @@ export const authReducer = (state = initialState, action) => {
                         (item) => item.id !== restaurant.id
                     )
                     : [restaurant, ...state.favourites]
+            };
+        }
+        case UPSERT_SAVED_ADDRESS: {
+            if (!state.user || !action.payload) return state;
+            const addresses = state.user.addresses || [];
+            const existingIndex = addresses.findIndex((address) => address.id === action.payload.id);
+            const duplicateIndex = addresses.findIndex((address) =>
+                addressKey(address) === addressKey(action.payload)
+            );
+
+            if (existingIndex >= 0) {
+                return {
+                    ...state,
+                    user: {
+                        ...state.user,
+                        addresses: addresses.map((address, index) =>
+                            index === existingIndex ? action.payload : address
+                        ),
+                    },
+                };
+            }
+
+            return duplicateIndex >= 0 ? state : {
+                ...state,
+                user: {
+                    ...state.user,
+                    addresses: [...addresses, action.payload],
+                },
             };
         }
         case LOGOUT:
