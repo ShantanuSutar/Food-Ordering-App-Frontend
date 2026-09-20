@@ -22,6 +22,7 @@ const Detail = ({ label, value }) => (
 export const RestaurantDetails = () => {
   const [editing, setEditing] = useState(false)
   const restaurantState = useSelector((store) => store.restaurant)
+  const ownerName = useSelector((store) => store.auth.user?.fullName)
   const restaurant = restaurantState.usersRestaurant
   const dispatch = useDispatch()
 
@@ -68,7 +69,7 @@ export const RestaurantDetails = () => {
           <CardHeader title='Restaurant' />
           <CardContent className='!pt-0'>
             <dl>
-              <Detail label='Owner' value={restaurant.owner?.fullName} />
+              <Detail label='Owner' value={ownerName} />
               <Detail label='Description' value={restaurant.description} />
               <Detail label='Cuisine' value={restaurant.cuisineType} />
               <Detail label='Opening hours' value={restaurant.openingHours} />

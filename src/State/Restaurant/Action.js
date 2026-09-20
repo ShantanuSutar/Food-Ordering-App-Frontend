@@ -7,11 +7,10 @@ export const getAllRestaurantsAction = (token) => {
     return async (dispatch) => {
         dispatch({ type: GET_ALL_RESTAURANTS_REQUEST });
         try {
-            const { data } = await api.get("/api/restaurants", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const config = token
+                ? { headers: { Authorization: `Bearer ${token}` } }
+                : {};
+            const { data } = await api.get("/api/restaurants", config);
             dispatch({type: GET_ALL_RESTAURANTS_SUCCESS, payload: data});
         } catch (error) {
             const message = getApiErrorMessage(error, "Could not load restaurants");
@@ -25,11 +24,10 @@ export const getRestaurantById = (reqData) => {
     return async (dispatch) => {
         dispatch({ type: GET_RESTAURANT_BY_ID_REQUEST });
         try {
-            const { data } = await api.get(`/api/restaurants/${reqData.restaurantId}`, {
-                headers: {
-                    Authorization: `Bearer ${reqData.jwt}`,
-                },
-            });
+            const config = reqData.jwt
+                ? { headers: { Authorization: `Bearer ${reqData.jwt}` } }
+                : {};
+            const { data } = await api.get(`/api/restaurants/${reqData.restaurantId}`, config);
             dispatch({type: GET_RESTAURANT_BY_ID_SUCCESS, payload: data});
         } catch (error) {
             const message = getApiErrorMessage(error, "Could not load restaurant");
@@ -281,11 +279,10 @@ export const getRestaurantsCategory = ({ jwt, restaurantId}) => {
     return async (dispatch) => {
         dispatch({ type: GET_RESTAURANTS_CATEGORY_REQUEST });
         try {
-            const { data } = await api.get(`/api/category/restaurant/${restaurantId}`, {
-                headers: {
-                    Authorization: `Bearer ${jwt}`,
-                },
-            });
+            const config = jwt
+                ? { headers: { Authorization: `Bearer ${jwt}` } }
+                : {};
+            const { data } = await api.get(`/api/category/restaurant/${restaurantId}`, config);
             dispatch({type: GET_RESTAURANTS_CATEGORY_SUCCESS, payload: data});
         } catch (error) {
             dispatch({type: GET_RESTAURANTS_CATEGORY_FAILURE, payload: getApiErrorMessage(error, "Could not load categories")})

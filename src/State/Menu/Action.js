@@ -87,11 +87,10 @@ export const getMenuItemsByRestaurantId = (reqData) => {
                 url += `&food_category=${reqData.foodCategory}`;
             }
 
-            const { data } = await api.get(url, {
-                headers: {
-                    Authorization: `Bearer ${reqData.jwt}`,
-                },
-            });
+            const config = reqData.jwt
+                ? { headers: { Authorization: `Bearer ${reqData.jwt}` } }
+                : {};
+            const { data } = await api.get(url, config);
 
             dispatch({
                 type: GET_MENU_ITEMS_BY_RESTAURANT_ID_SUCCESS,

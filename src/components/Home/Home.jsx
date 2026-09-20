@@ -16,7 +16,7 @@ export const Home = () => {
 
   useEffect(() => {
     dispatch(getTopMeals())
-    if (jwt) dispatch(getAllRestaurantsAction(jwt))
+    dispatch(getAllRestaurantsAction(jwt))
   }, [dispatch, jwt])
 
   
