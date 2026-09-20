@@ -23,8 +23,9 @@ const statusColor = (status) => {
 const OrderItems = ({ items = [] }) => (
   <div className='space-y-1'>
     {items.map((orderItem) => (
-      <div key={orderItem.id ?? `${orderItem.food?.id}-${orderItem.food?.name}`} className='text-sm'>
-        <span>{orderItem.quantity}× {orderItem.food?.name || 'Archived item'}</span>
+      <div key={orderItem.id ?? `${orderItem.food?.id}-${orderItem.itemName}`} className='text-sm'>
+        <span>{orderItem.quantity}× {orderItem.itemName || orderItem.food?.name || 'Archived item'}</span>
+        {orderItem.unitPrice != null && <span className='ml-2 text-xs text-gray-400'>₹{orderItem.unitPrice} each</span>}
         {orderItem.ingredients?.length > 0 && (
           <span className='ml-2 text-xs text-gray-400'>({orderItem.ingredients.join(', ')})</span>
         )}
@@ -76,7 +77,7 @@ export const OrderTable = ({ limit, status = 'ALL' }) => {
                   <Avatar
                     key={item.id ?? item.food?.id}
                     src={item.food?.images?.[0]}
-                    alt={item.food?.name || 'Order item'}
+                    alt={item.itemName || item.food?.name || 'Order item'}
                   />
                 ))}
               </AvatarGroup>
