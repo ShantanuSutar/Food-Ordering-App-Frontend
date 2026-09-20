@@ -34,29 +34,29 @@ const MenuCard = ({ item }) => {
   }
 
   return (
-    <Accordion>
+    <Accordion className='!rounded-xl'>
         <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1-content"
             id="panel1-header"
             >
-            <div className=' lg:flex items-center justify-between'>
-              <div className=' lg:flex items-center lg:gap-5'>
-                <img className='  w-[7rem] h-[7rem] object-cover' src={item.images[0]} alt="" />
-                <div className=' space-y-1 lg:space-y-5 lg:max-w-2xl'>
-                  <p className=' font-semibold text-xl'>{item.name}</p>
-                  <p>₹{item.price}</p>
-                  <p className=' text-gray-400'>{item.description}</p>
+            <div className='w-full min-w-0'>
+              <div className='flex min-w-0 items-center gap-4 sm:gap-5'>
+                <img className='h-24 w-24 shrink-0 rounded-lg object-cover sm:h-28 sm:w-28' src={item.images?.[0]} alt={item.name} />
+                <div className='min-w-0 flex-1 space-y-1.5'>
+                  <div className='flex flex-wrap items-center gap-2'><p className='text-lg font-bold sm:text-xl'>{item.name}</p>{!item.available && <span className='rounded-full bg-red-500/10 px-2 py-1 text-xs font-semibold text-red-400'>Out of stock</span>}</div>
+                  <p className='font-bold text-orange-400'>₹{item.price}</p>
+                  <p className='line-clamp-2 text-sm text-slate-400'>{item.description}</p>
                 </div>
               </div>
             </div>
         </AccordionSummary>
         <AccordionDetails>
           <form onSubmit={handleAddItemToCart}>
-            <div className=' flex gap-5 flex-wrap '>
+            <div className='flex flex-wrap gap-6 border-t border-slate-400/15 pt-4'>
               {
                 Object.keys(categorizeIngredients(item.ingredients)).map((category) => <div key={category}>
-                  <p>{category}</p>
+                  <p className='mb-2 font-semibold'>{category}</p>
                   <FormGroup>
                     {categorizeIngredients(item.ingredients)[category].map((item) => <FormControlLabel key={item.id} control={<Checkbox onChange={() => handleCheckBoxChange(item.name)} />} label={item.name} />)}
                   </FormGroup>

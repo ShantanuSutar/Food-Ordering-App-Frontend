@@ -49,8 +49,8 @@ export const AdminSidebar = ({ open, handleClose }) => {
     >
       <div className='flex min-h-full flex-col px-3 py-5'>
         <div className='px-3 pb-6'>
-          <p className='text-2xl font-bold text-pink-400'>DineHub</p>
-          <p className='text-sm text-gray-400'>Owner tools</p>
+          <p className='text-2xl font-extrabold tracking-tight text-slate-50'>Dine<span className='text-orange-500'>Hub</span></p>
+          <p className='mt-1 text-xs font-medium uppercase tracking-[0.14em] text-slate-400'>Owner tools</p>
         </div>
 
         <List className='flex-1'>

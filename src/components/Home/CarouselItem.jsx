@@ -9,10 +9,10 @@ export const CarouselItem = ({ item, onSelect }) => {
     <button
       type="button"
       onClick={onSelect}
-      className="group w-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] text-left shadow-md transition duration-300 hover:-translate-y-1 hover:border-pink-500/50 hover:bg-white/[0.08] hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500"
+      className="group h-full w-full overflow-hidden rounded-xl border border-slate-400/15 bg-[var(--color-surface)] text-left transition duration-300 hover:-translate-y-1 hover:border-orange-500/45 hover:shadow-[0_16px_34px_rgba(2,6,23,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
       aria-label={`View ${item.name} at ${item.restaurantName}`}
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-white/[0.06]">
+      <div className="relative aspect-[4/3] overflow-hidden bg-slate-800">
         {showImage ? (
           <img
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
@@ -32,7 +32,7 @@ export const CarouselItem = ({ item, onSelect }) => {
         <h2 className="truncate text-lg font-semibold text-gray-100">{item.name}</h2>
         <p className="truncate text-sm text-gray-400">{item.restaurantName}</p>
         {item.price != null && (
-          <p className="pt-1 font-semibold text-pink-400">₹{item.price}</p>
+          <p className="pt-1 font-bold text-orange-400">₹{item.price}</p>
         )}
       </div>
     </button>

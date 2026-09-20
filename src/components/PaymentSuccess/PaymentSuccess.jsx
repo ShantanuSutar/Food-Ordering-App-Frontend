@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import TaskAltIcon from '@mui/icons-material/TaskAlt'
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import HourglassTopIcon from '@mui/icons-material/HourglassTop'
-import { green } from '@mui/material/colors'
 import { Button, Card, CircularProgress } from '@mui/material'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
@@ -69,17 +68,16 @@ export const PaymentSuccess = () => {
   const isPending = verificationState === 'pending'
 
   return (
-    <div className='min-h-screen px-5'>
-      <div className='flex h-[90vh] flex-col items-center justify-center'>
-        <Card className='box flex w-full flex-col items-center rounded-md p-5 lg:w-1/4' aria-live='polite'>
+    <main className='page-shell flex min-h-[calc(100svh-4rem)] items-center justify-center py-12'>
+        <Card className='flex w-full max-w-lg flex-col items-center rounded-xl p-7 text-center sm:p-10' aria-live='polite'>
           {isVerifying ? (
             <CircularProgress color='secondary' size={72} />
           ) : isVerified ? (
-            <TaskAltIcon sx={{ fontSize: '5rem', color: green[500] }} />
+            <TaskAltIcon sx={{ fontSize: '5rem', color: 'success.main' }} />
           ) : isPending ? (
-            <HourglassTopIcon sx={{ fontSize: '5rem', color: '#f3a847' }} />
+            <HourglassTopIcon sx={{ fontSize: '5rem', color: 'secondary.main' }} />
           ) : (
-            <CancelOutlinedIcon sx={{ fontSize: '5rem', color: '#ff6b6b' }} />
+            <CancelOutlinedIcon sx={{ fontSize: '5rem', color: 'error.main' }} />
           )}
 
           <h1 className='py-5 text-2xl font-semibold'>
@@ -115,7 +113,6 @@ export const PaymentSuccess = () => {
             </div>
           )}
         </Card>
-      </div>
-    </div>
+    </main>
   )
 }

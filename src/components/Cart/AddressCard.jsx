@@ -10,13 +10,13 @@ const AddressCard = ({ item, selected = false, checkoutDisabled = false, onSelec
   return (
     <Card
       onClick={() => onSelect?.(item)}
-      className={`flex min-h-56 w-full gap-4 rounded-2xl border p-5 transition-all duration-200 sm:w-72 ${selectable ? 'cursor-pointer' : ''} ${
+      className={`flex min-h-56 w-full gap-4 rounded-xl border p-5 transition-all duration-200 ${selectable ? 'cursor-pointer' : ''} ${
         selected
-          ? 'border-pink-500 bg-pink-500/10 shadow-lg shadow-pink-950/30'
-          : 'border-white/10 hover:-translate-y-1 hover:border-pink-400/60 hover:shadow-lg'
+          ? 'border-orange-500 bg-orange-500/10 shadow-[0_12px_30px_rgba(249,115,22,0.1)]'
+          : 'border-slate-400/15 hover:-translate-y-0.5 hover:border-orange-400/55'
       }`}
     >
-      <HomeOutlinedIcon color={selected ? 'secondary' : 'inherit'} />
+      <HomeOutlinedIcon color={selected ? 'primary' : 'inherit'} />
       <div className='flex min-w-0 flex-1 flex-col gap-3 text-gray-400'>
         <div className='flex flex-wrap items-center justify-between gap-2'>
           <h2 className='truncate text-lg font-semibold text-white'>{item.fullName || 'Delivery address'}</h2>
@@ -27,10 +27,10 @@ const AddressCard = ({ item, selected = false, checkoutDisabled = false, onSelec
               onClick={(event) => event.stopPropagation()}
               inputProps={{ 'aria-label': `Select ${item.fullName || 'delivery address'}` }}
               size='small'
-              color='secondary'
+              color='primary'
             />
           )}
-          {selected && <Chip label='Selected' color='secondary' size='small' />}
+          {selected && <Chip label='Selected' color='primary' size='small' />}
         </div>
         <p className='flex-1 text-sm leading-6'>{formatAddress(item) || 'Address details unavailable'}</p>
         {!complete && <p className='text-xs text-red-400'>This saved address is incomplete.</p>}

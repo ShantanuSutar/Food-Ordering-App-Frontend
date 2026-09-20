@@ -92,14 +92,14 @@ export const getOrderDetails = ({ orderId, jwt }) => async (dispatch) => {
     }
 }
 
-export const cancelOrder = ({ orderId, jwt }) => async (dispatch) => {
+export const cancelOrder = ({ orderId, jwt, silent = false }) => async (dispatch) => {
     dispatch({ type: CANCEL_ORDER_REQUEST });
     try {
         const { data } = await api.put(`/api/order/${orderId}/cancel`, {}, {
             headers: { Authorization: `Bearer ${jwt}` },
         });
         dispatch({ type: CANCEL_ORDER_SUCCESS, payload: data });
-        notifySuccess("Order cancelled", `order-cancel-${orderId}`);
+        if (!silent) notifySuccess("Order cancelled", `order-cancel-${orderId}`);
         return data;
     } catch (error) {
         const message = getApiErrorMessage(error, "Could not cancel order");

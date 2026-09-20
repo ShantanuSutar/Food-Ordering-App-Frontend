@@ -143,9 +143,9 @@ const Cart = () => {
 
   if (cartIsEmpty) {
     return (
-      <main className='flex min-h-[75vh] items-center justify-center px-5'>
-        <Card className='flex w-full max-w-md flex-col items-center gap-5 rounded-2xl p-8 text-center'>
-          <ShoppingCartOutlinedIcon sx={{ fontSize: '4rem', color: 'text.secondary' }} />
+      <main className='page-shell flex min-h-[76vh] items-center justify-center py-12'>
+        <Card className='flex w-full max-w-lg flex-col items-center gap-5 rounded-xl p-8 text-center sm:p-12'>
+          <span className='flex h-20 w-20 items-center justify-center rounded-full bg-orange-500/10 text-orange-400'><ShoppingCartOutlinedIcon sx={{ fontSize: '3rem' }} /></span>
           <div>
             <h1 className='text-2xl font-semibold'>Your cart is empty</h1>
             <p className='mt-2 text-gray-400'>Add a meal before choosing a delivery address.</p>
@@ -158,26 +158,32 @@ const Cart = () => {
 
   return (
     <>
-      <main className='lg:flex lg:justify-between'>
-        <section className='space-y-6 pt-10 lg:min-h-screen lg:w-[34%]'>
-          {cartItems.map((item) => <CartItem key={item.id} item={item} />)}
-          <Divider />
+      <main className='page-shell py-8 sm:py-12'>
+        <div className='mb-8'>
+          <p className='eyebrow'>Checkout</p>
+          <h1 className='!mb-0 !mt-2 !text-3xl !font-bold'>Review and deliver</h1>
+        </div>
+        <div className='grid min-w-0 gap-8 lg:grid-cols-[minmax(320px,0.8fr)_minmax(0,1.35fr)] lg:items-start'>
+        <section className='min-w-0 space-y-5 lg:sticky lg:top-24'>
+          <Card className='overflow-hidden rounded-xl'>
+            <div className='border-b border-slate-400/15 px-5 py-4'><h2 className='!m-0 !text-lg !font-bold'>Your order</h2><p className='mt-1 text-sm text-slate-400'>{cartItems.length} item types</p></div>
+            <div className='divide-y divide-slate-400/15'>{cartItems.map((item) => <CartItem key={item.id} item={item} />)}</div>
+          </Card>
 
-          <div className='px-5 text-sm'>
-            <p className='py-5 font-extralight'>Bill Details</p>
-            <div className='space-y-3 text-gray-400'>
+          <Card className='rounded-xl p-5 text-sm'>
+            <h2 className='!mb-5 !text-lg !font-bold'>Bill details</h2>
+            <div className='space-y-3 text-slate-400'>
               <div className='flex justify-between'><p>Item Total</p><p>₹{itemTotal}</p></div>
               <div className='flex justify-between'><p>Additional charges</p><p>₹0</p></div>
               <Divider />
-              <div className='flex justify-between font-medium text-white'><p>Total Pay</p><p>₹{itemTotal}</p></div>
+              <div className='flex justify-between text-lg font-bold text-white'><p>Total pay</p><p className='text-orange-400'>₹{itemTotal}</p></div>
             </div>
-          </div>
+          </Card>
         </section>
 
-        <Divider orientation='vertical' flexItem />
-        <section className='flex justify-center px-4 pb-10 sm:px-6 lg:w-[66%]'>
-          <div className='w-full max-w-4xl'>
-            <h1 className='py-10 text-center text-2xl font-semibold'>Choose Delivery Address</h1>
+        <section className='min-w-0'>
+          <div className='w-full'>
+            <div className='mb-6'><h2 className='!mb-1 !text-2xl !font-bold'>Delivery address</h2><p className='text-sm text-slate-400'>Choose where you would like this order delivered.</p></div>
             {cartIsInvalid && (
               <p className='mb-5 rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-center text-red-300'>
                 This cart is missing restaurant information and cannot be checked out.
@@ -185,12 +191,12 @@ const Cart = () => {
             )}
 
             {savedAddresses.length === 0 && (
-              <div className='mb-6 rounded-2xl border border-dashed border-white/20 p-6 text-center text-gray-400'>
+              <div className='empty-state mb-6 p-6 text-center'>
                 No saved delivery addresses yet. Add one to continue checkout.
               </div>
             )}
 
-            <div className='flex flex-wrap justify-center gap-5'>
+            <div className='grid gap-5 sm:grid-cols-2'>
               {savedAddresses.map((address) => (
                 <AddressCard
                   key={address.id ?? addressKey(address)}
@@ -203,8 +209,8 @@ const Cart = () => {
                 />
               ))}
 
-              <Card className='flex min-h-56 w-full gap-4 rounded-2xl border border-dashed border-white/20 p-5 transition-colors hover:border-pink-400/60 sm:w-72'>
-                <AddLocationAlt color='secondary' />
+              <Card className='flex min-h-56 w-full gap-4 rounded-xl !border-dashed p-5 transition-colors hover:border-orange-400/60'>
+                <AddLocationAlt color='primary' />
                 <div className='flex flex-1 flex-col gap-3 text-gray-400'>
                   <h2 className='text-lg font-semibold text-white'>Add New Address</h2>
                   <p className='flex-1 text-sm leading-6'>Enter a new delivery address. It will be saved after your order is created.</p>
@@ -214,6 +220,7 @@ const Cart = () => {
             </div>
           </div>
         </section>
+        </div>
       </main>
 
       <Modal open={open} onClose={closeAddressModal} aria-labelledby='add-address-title'>

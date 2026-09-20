@@ -39,9 +39,9 @@ export const IngredientsCategoryTable = () => {
         <CardContent className='space-y-2 !pt-0'>
           {error && <p className='rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-red-300'>{error}</p>}
           {categories.length === 0 ? (
-            <div className='rounded-xl border border-dashed border-white/15 p-6 text-center text-gray-400'>No ingredient categories yet.</div>
+            <div className='rounded-xl border border-dashed border-slate-400/20 p-6 text-center text-gray-400'>No ingredient categories yet.</div>
           ) : categories.map((item) => (
-            <div key={item.id} className='flex items-center justify-between gap-3 rounded-xl border border-white/10 p-3'>
+            <div key={item.id} className='flex items-center justify-between gap-3 rounded-xl border border-slate-400/15 p-3'>
               <span className='truncate'>{item.name}</span>
               <div className='flex shrink-0'>
                 <IconButton aria-label={`Edit ${item.name}`} disabled={loading} onClick={() => openForm(item)}><EditIcon /></IconButton>

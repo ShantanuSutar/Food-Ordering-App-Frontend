@@ -5,10 +5,11 @@ import { MenuTable } from '../Menu/MenuTable'
 import { OrderTable } from '../Orders/OrderTable'
 
 const Metric = ({ label, value, detail }) => (
-  <Card>
+  <Card className='relative overflow-hidden transition-colors hover:border-orange-500/30'>
+    <span className='absolute inset-y-0 left-0 w-1 bg-orange-500' />
     <CardContent>
       <p className='text-sm text-gray-400'>{label}</p>
-      <p className='mt-2 text-3xl font-bold'>{value}</p>
+      <p className='mt-2 text-3xl font-extrabold text-slate-50'>{value}</p>
       {detail && <p className='mt-1 text-xs text-gray-500'>{detail}</p>}
     </CardContent>
   </Card>
@@ -23,7 +24,8 @@ export const RestaurantDashboard = () => {
   return (
     <div className='space-y-6'>
       <div>
-        <h1 className='text-2xl font-bold'>Dashboard</h1>
+        <p className='eyebrow'>Overview</p>
+        <h1 className='!mb-0 !mt-2 !text-3xl !font-bold'>Dashboard</h1>
         <p className='mt-1 text-gray-400'>Live summary from your menu and orders.</p>
       </div>
       <section className='grid gap-4 sm:grid-cols-2 xl:grid-cols-4'>

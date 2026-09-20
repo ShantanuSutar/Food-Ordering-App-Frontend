@@ -32,24 +32,25 @@ export const Search = () => {
     };
 
     return (
-        <div className="px-5 lg:px-20 py-10 min-h-screen">
-            <h1 className="text-2xl font-semibold mb-5 text-gray-400">Search Menu Items</h1>
+        <main className="page-shell min-h-screen py-10 sm:py-14">
+            <p className="eyebrow">Discover</p>
+            <h1 className="!mb-6 !mt-2 !text-3xl !font-bold">Search menu items</h1>
             <input 
                 type="text" 
                 value={keyword}
                 onChange={(event) => setKeyword(event.target.value)}
                 placeholder="Search for pizza, burger, etc." 
-                className="w-full p-4 rounded-md bg-[#1a1a1a] text-white border border-gray-700 focus:outline-none focus:border-[#e91e63] mb-10 transition-colors duration-300"
+                className="mb-10 w-full rounded-lg border border-slate-400/25 bg-[var(--color-surface-2)] p-4 text-white outline-none transition placeholder:text-slate-500 focus:border-orange-400 focus:ring-2 focus:ring-orange-500/25"
             />
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                {menu.searchLoading && <p className="text-gray-500">Searching…</p>}
+                {menu.searchLoading && [1, 2, 3, 4].map((item) => <div key={item} className="h-72 animate-pulse rounded-xl bg-slate-700/35" />)}
                 {!menu.searchLoading && menu.search.map((item) => (
                     <CarouselItem key={item.id} item={item} onSelect={() => selectResult(item)} />
                 ))}
                 {!menu.searchLoading && menu.hasSearched && menu.search.length === 0 && (
-                    <p className="text-gray-500">No results found.</p>
+                    <div className="empty-state col-span-full px-6 py-12 text-center">No meals match your search.</div>
                 )}
             </div>
-        </div>
+        </main>
     );
 };

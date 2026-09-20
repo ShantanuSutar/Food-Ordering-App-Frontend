@@ -1,4 +1,4 @@
-import { Divider, FormControl, FormControlLabel, Grid, Radio, RadioGroup, Typography } from '@mui/material'
+import { Card, Chip, CircularProgress, Divider, FormControl, FormControlLabel, Grid, Radio, RadioGroup, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -58,9 +58,9 @@ const RestaurantDetails = () => {
     }, [menu?.menuItems, selectedFoodId]);
 
     return (
-        <div className=' px-5 lg:px-20'>
+        <main className='page-shell py-6 sm:py-10'>
             <section>
-                <h3 className=' text-gray-500 py-2 mt-10'>Home/India/Indian Fast Food/3</h3>
+                <p className='mb-4 text-sm text-slate-500'>Home / {restaurant?.restaurant?.address?.city || 'Restaurant'} / {restaurant?.restaurant?.name || 'Menu'}</p>
                 <div>
                     <Grid container spacing={{ xs: 1, lg: 3 }}>
 
@@ -73,7 +73,7 @@ const RestaurantDetails = () => {
                                 }}
                             >
                                 <img
-                                    className="w-full h-[40vh] object-cover"
+                                    className={`w-full object-cover ${index === 0 ? 'h-[42vh] min-h-72 rounded-xl' : 'h-56 rounded-lg'}`}
                                     src={image}
                                     alt={`Restaurant ${index + 1}`}
                                 />
@@ -83,8 +83,10 @@ const RestaurantDetails = () => {
                     </Grid>
                 </div>
 
-                <div className='pt-3 pb-5'>
-                    <h1 className='text-4xl font-semibold'>
+                <div className='py-7'>
+                    <div className='flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between'>
+                    <div>
+                    <h1 className='!m-0 !text-3xl !font-bold sm:!text-4xl'>
                         {restaurant?.restaurant?.name}
                     </h1>
 
@@ -92,9 +94,12 @@ const RestaurantDetails = () => {
                         {restaurant?.restaurant?.description}
                     </p>
 
-                    <div className='space-y-3 mt-3'>
+                    </div>
+                    <Chip color={restaurant?.restaurant?.open ? 'success' : 'error'} label={restaurant?.restaurant?.open ? 'Open for orders' : 'Currently closed'} />
+                    </div>
+                    <div className='mt-5 grid gap-3 text-sm sm:grid-cols-2'>
 
-                        <p className='text-gray-500 flex items-center gap-3'>
+                        <p className='flex items-center gap-3 text-slate-400'>
                             <LocationOnIcon />
                             <span>
                                 {restaurant?.restaurant?.address?.city},{" "}
@@ -103,23 +108,10 @@ const RestaurantDetails = () => {
                             </span>
                         </p>
 
-                        <p className='text-gray-500 flex items-center gap-3'>
+                        <p className='flex items-center gap-3 text-slate-400'>
                             <CalendarTodayIcon />
                             <span>
                                 {restaurant?.restaurant?.openingHours}
-                            </span>
-                        </p>
-
-                        <p className='text-gray-500'>
-                            Status:{" "}
-                            <span
-                                className={
-                                    restaurant?.restaurant?.open
-                                        ? "text-green-600"
-                                        : "text-red-600"
-                                }
-                            >
-                                {restaurant?.restaurant?.open ? "Open" : "Closed"}
                             </span>
                         </p>
 
@@ -127,9 +119,9 @@ const RestaurantDetails = () => {
                 </div>
             </section>
             <Divider />
-            <section className=' pt-[2rem] lg:flex relative'>
-                <div className=' space-y-10 lg:w-[20%] filter '>
-                    <div className=' box space-y-5 lg:sticky top-28'>
+            <section className='relative grid gap-7 pt-8 lg:grid-cols-[250px_minmax(0,1fr)]'>
+                <div className='filter'>
+                    <Card className='space-y-5 rounded-xl p-5 lg:sticky lg:top-24'>
                         <div>
                             <Typography variant='h5' sx={{ paddingBottom: "1rem" }}>Food Type</Typography>
 
@@ -151,15 +143,17 @@ const RestaurantDetails = () => {
                                 </RadioGroup>
                             </FormControl>
                         </div>
-                    </div>
+                    </Card>
                 </div>
-                <div className=' space-y-5 lg:w-[80%] lg:pl-10'>
-                    {menu?.menuItems?.map((item) => (
+                <div className='min-w-0 space-y-4'>
+                    {menu.loading && menu.menuItems.length === 0 && <div className='flex min-h-48 items-center justify-center'><CircularProgress /></div>}
+                    {!menu.loading && menu.menuItems.length === 0 && <div className='empty-state px-6 py-12 text-center'>No menu items match these filters.</div>}
+                    {menu.menuItems.map((item) => (
                         <div
                             id={`food-${item.id}`}
                             key={item.id}
                             className={selectedFoodId === item.id
-                                ? "rounded-2xl ring-2 ring-pink-500 ring-offset-4 ring-offset-[#16171d]"
+                                ? "rounded-xl ring-2 ring-orange-500 ring-offset-4 ring-offset-[var(--color-bg)]"
                                 : ""}
                         >
                             <MenuCard item={item} />
@@ -167,7 +161,7 @@ const RestaurantDetails = () => {
                     ))}
                 </div>
             </section>
-        </div>
+        </main>
     )
 }
 

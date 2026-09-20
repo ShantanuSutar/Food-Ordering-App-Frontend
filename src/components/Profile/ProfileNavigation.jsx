@@ -78,7 +78,7 @@ const ProfileNavigation = ({ open = false, handleClose = () => {} }) => {
       <nav aria-label='Profile navigation' className='flex h-full min-w-0 flex-col overflow-y-auto px-3 py-5'>
         <div className='mb-4 flex items-center justify-between px-3'>
           <div>
-            <p className='text-xs font-medium uppercase tracking-[0.2em] text-pink-400'>Account</p>
+            <p className='eyebrow'>Account</p>
             <p className='mt-1 text-lg font-semibold text-white'>My profile</p>
           </div>
           {isSmallScreen && (
@@ -99,14 +99,14 @@ const ProfileNavigation = ({ open = false, handleClose = () => {} }) => {
                   onClick={() => handleNavigate(item)}
                   className={`flex w-full items-center gap-4 rounded-xl px-4 py-3 text-left text-base transition-colors ${
                     active
-                      ? 'bg-pink-500/15 font-semibold text-pink-300'
-                      : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                      ? 'bg-orange-500/12 font-semibold text-orange-300 ring-1 ring-inset ring-orange-500/20'
+                      : 'text-slate-300 hover:bg-slate-700/45 hover:text-white'
                   }`}
                 >
                   <span className='flex shrink-0 items-center'>{item.icon}</span>
                   <span className='truncate'>{item.title}</span>
                 </button>
-                {index !== menu.length - 1 && <Divider className='!my-1 !border-white/5' />}
+                {index !== menu.length - 1 && <Divider className='!my-1 !border-slate-400/10' />}
               </Fragment>
             )
           })}

@@ -25,7 +25,7 @@ const OrderCard = ({ order, onCancel, cancelling }) => {
   const canCancel = order.orderStatus === 'PENDING' && order.paymentStatus !== 'PAID'
 
   return (
-    <Card className='min-w-0 rounded-2xl p-4 sm:p-5'>
+    <Card className='min-w-0 rounded-xl p-4 transition-colors hover:border-orange-500/30 sm:p-5'>
       <div className='flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between'>
         <div className='flex min-w-0 gap-4'>
           <AvatarGroup max={3} sx={{ alignSelf: 'flex-start', '& .MuiAvatar-root': { width: 48, height: 48 } }}>

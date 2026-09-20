@@ -1,7 +1,5 @@
-import { Avatar, IconButton, Badge} from '@mui/material'
+import { Avatar, Badge, IconButton, Tooltip } from '@mui/material'
 import PersonIcon from '@mui/icons-material/Person'
-
-import { pink } from '@mui/material/colors'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
@@ -20,30 +18,39 @@ export const Navbar = () => {
   }
   
   return (
-    <nav className="sticky top-0 z-[1100] flex min-h-16 w-full min-w-0 items-center justify-between bg-[#e91e63] px-5 py-3 lg:px-20">
-      <div className=" lg:mr-10 cursor-pointer flex items-center space-x-4">
-          <p onClick={() => navigate("/")} className="logo font-semibold text-gray-300 text-2xl">
-              DineHub
-          </p>
-      </div>
+    <nav className="sticky top-0 z-[1100] w-full border-b border-slate-400/15 bg-[var(--color-bg)]/92 backdrop-blur-xl">
+      <div className="page-shell flex min-h-16 items-center justify-between gap-4">
+        <button onClick={() => navigate('/')} className="group flex items-center gap-3 rounded-lg text-left" aria-label="DineHub home">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-500 font-black text-[var(--color-bg)] shadow-[0_6px_18px_rgba(249,115,22,0.22)] transition group-hover:bg-orange-600">D</span>
+          <span>
+            <span className="block text-xl font-extrabold tracking-tight text-slate-50">Dine<span className="text-orange-500">Hub</span></span>
+            <span className="hidden text-[0.65rem] font-medium uppercase tracking-[0.18em] text-slate-400 sm:block">Good food, delivered</span>
+          </span>
+        </button>
 
-      <div className=' flex items-center space-x-2 lg:space-x-10'>
+        <div className='flex items-center gap-1 sm:gap-2'>
           <NavbarSearch />
-
-          <div className=''>
-            {auth.user ? <Avatar onClick={handleAvatarClick} sx={{bgcolor:"white", color:pink.A400, cursor: 'pointer'}}>{auth.user?.fullName?.[0]?.toUpperCase()}</Avatar> : <IconButton onClick={() => navigate("/account/login")}>
-              <PersonIcon/>
-              </IconButton>}
-          </div>
-
-          <div className=''>
-            <IconButton onClick={() => navigate("/cart")} >
-              <Badge color='primary' badgeContent={cart?.cartItems?.length || 0}>
+          {auth.user ? (
+            <Tooltip title={auth.user.fullName || 'Open profile'}>
+              <IconButton onClick={handleAvatarClick} aria-label='Open profile'>
+                <Avatar sx={{ width: 34, height: 34, bgcolor: 'primary.main', color: '#111827', fontSize: '0.9rem', fontWeight: 800 }}>
+                  {auth.user?.fullName?.[0]?.toUpperCase()}
+                </Avatar>
+              </IconButton>
+            </Tooltip>
+          ) : (
+            <Tooltip title='Sign in'>
+              <IconButton onClick={() => navigate('/account/login')} aria-label='Sign in'><PersonIcon /></IconButton>
+            </Tooltip>
+          )}
+          <Tooltip title='Cart'>
+            <IconButton onClick={() => navigate('/cart')} aria-label={`Cart with ${cart?.cartItems?.length || 0} items`}>
+              <Badge color='primary' badgeContent={cart?.cartItems?.length || 0} max={99} sx={{ '& .MuiBadge-badge': { color: '#111827', fontWeight: 800, border: '2px solid #111827' } }}>
                 <ShoppingCartIcon sx={{fontSize: "1.5rem"}} />
               </Badge>
             </IconButton>
-          </div>
-     
+          </Tooltip>
+        </div>
       </div>
     </nav>
   )

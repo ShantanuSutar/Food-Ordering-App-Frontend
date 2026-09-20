@@ -10,16 +10,14 @@ import Address from './Address'
 import Favourites from './Favourites'
 import Events from './Events'
 import Payments from './Payments'
+import EmptyState from '../ui/EmptyState'
+import SectionHeader from '../ui/SectionHeader'
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined'
 
 const ProfilePlaceholder = ({ title, message }) => (
   <section className='space-y-6'>
-    <header>
-      <p className='text-sm font-medium uppercase tracking-[0.18em] text-pink-400'>My profile</p>
-      <h1 className='!m-0 !mt-2 !text-2xl !font-semibold sm:!text-3xl'>{title}</h1>
-    </header>
-    <div className='rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-8 text-center text-gray-400'>
-      {message}
-    </div>
+    <SectionHeader eyebrow='My profile' title={title} />
+    <EmptyState icon={<NotificationsNoneOutlinedIcon />} title={`No ${title.toLowerCase()}`} description={message} />
   </section>
 )
 
@@ -28,7 +26,7 @@ const Profile = () => {
 
   return (
     <div className='w-full min-w-0 overflow-x-clip'>
-      <div className='sticky top-16 z-30 flex min-h-14 items-center gap-3 border-b border-white/10 bg-[#16171d]/95 px-4 backdrop-blur lg:hidden'>
+      <div className='sticky top-16 z-30 flex min-h-14 items-center gap-3 border-b border-slate-400/15 bg-[var(--color-bg)]/95 px-4 backdrop-blur lg:hidden'>
         <Button
           aria-label='Open profile navigation'
           onClick={() => setOpenSideBar(true)}
@@ -41,7 +39,7 @@ const Profile = () => {
       </div>
 
       <div className='mx-auto flex w-full max-w-[1600px] min-w-0 items-stretch'>
-        <aside className='sticky top-16 hidden h-[calc(100svh-4rem)] w-[24%] min-w-60 max-w-80 shrink-0 self-start lg:block'>
+        <aside className='sticky top-16 hidden h-[calc(100svh-4rem)] w-[23%] min-w-60 max-w-80 shrink-0 self-start border-r border-slate-400/15 lg:block'>
           <ProfileNavigation
             open={openSideBar}
             handleClose={() => setOpenSideBar(false)}
@@ -49,7 +47,7 @@ const Profile = () => {
         </aside>
 
         <main className='min-w-0 flex-1'>
-          <div className='mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10'>
+          <div className='mx-auto w-full max-w-6xl px-4 py-7 sm:px-6 sm:py-9 lg:px-10 lg:py-12'>
             <Routes>
               <Route index element={<UserProfile />} />
               <Route path='orders' element={<Orders />} />

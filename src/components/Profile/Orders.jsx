@@ -3,6 +3,9 @@ import { Alert, CircularProgress } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { cancelOrder, getUsersOrders } from '../../State/Order/Action'
 import OrderCard from './OrderCard'
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined'
+import EmptyState from '../ui/EmptyState'
+import SectionHeader from '../ui/SectionHeader'
 
 const Orders = () => {
   const { orders = [], loading, error } = useSelector((store) => store.order)
@@ -20,10 +23,7 @@ const Orders = () => {
 
   return (
     <section className='space-y-6'>
-      <header>
-        <p className='text-sm font-medium uppercase tracking-[0.18em] text-pink-400'>My profile</p>
-        <h1 className='!m-0 !mt-2 !text-2xl !font-semibold sm:!text-3xl'>My orders</h1>
-      </header>
+      <SectionHeader eyebrow='My profile' title='My orders' description='Track current orders and revisit past meals.' />
 
       {loading && orders.length === 0 ? (
         <div className='flex min-h-48 items-center justify-center' aria-label='Loading orders'>
@@ -34,9 +34,7 @@ const Orders = () => {
           {error}
         </Alert>
       ) : orders.length === 0 ? (
-        <div className='rounded-2xl border border-dashed border-white/15 p-8 text-center text-gray-400'>
-          You have not placed any orders yet.
-        </div>
+        <EmptyState icon={<ReceiptLongOutlinedIcon />} title='No orders yet' description='Your order history will appear here after your first checkout.' />
       ) : (
         <div className='mx-auto w-full max-w-4xl space-y-4'>
           {orders.map((order) => (

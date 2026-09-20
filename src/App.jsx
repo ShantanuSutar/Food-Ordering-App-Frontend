@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import './App.css'
 import { ThemeProvider } from '@emotion/react'
-import { darkTheme } from './components/Theme/DarkTheme'
+import { darkTheme, designTokens } from './components/Theme/DarkTheme'
 import { CssBaseline } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUser } from './State/Authentication/Action'
@@ -43,15 +43,15 @@ function App() {
           toastOptions={{
             duration: 3200,
             style: {
-              background: '#17131c',
-              color: '#f8f7fa',
-              border: '1px solid rgba(255,255,255,0.12)',
-              borderRadius: '14px',
-              boxShadow: '0 16px 45px rgba(0,0,0,0.38)',
+              background: designTokens.surfaceSecondary,
+              color: designTokens.text,
+              border: `1px solid ${designTokens.border}`,
+              borderRadius: '10px',
+              boxShadow: '0 16px 40px rgba(2,6,23,0.35)',
               padding: '12px 16px',
             },
-            success: { iconTheme: { primary: '#ec407a', secondary: '#17131c' } },
-            error: { iconTheme: { primary: '#ff6b6b', secondary: '#17131c' } },
+            success: { iconTheme: { primary: designTokens.success, secondary: designTokens.surfaceSecondary } },
+            error: { iconTheme: { primary: designTokens.error, secondary: designTokens.surfaceSecondary } },
           }}
         />
         <Routers/>

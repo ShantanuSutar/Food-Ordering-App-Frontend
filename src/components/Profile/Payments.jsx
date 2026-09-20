@@ -17,6 +17,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { getPaymentHistory } from '../../State/Order/Action'
+import SectionHeader from '../ui/SectionHeader'
 
 const EMPTY_PAYMENTS = []
 
@@ -95,13 +96,7 @@ const Payments = () => {
 
   return (
     <section className='min-w-0 space-y-6'>
-      <header>
-        <p className='text-sm font-medium uppercase tracking-[0.18em] text-pink-400'>My profile</p>
-        <h1 className='!m-0 !mt-2 !text-2xl !font-semibold sm:!text-3xl'>Payment history</h1>
-        <p className='mt-2 max-w-2xl text-sm text-gray-400'>
-          Secure Stripe payments linked to your DineHub orders.
-        </p>
-      </header>
+      <SectionHeader eyebrow='My profile' title='Payment history' description='Secure Stripe payments linked to your DineHub orders.' />
 
       {error && (
         <div role='alert' className='flex flex-col items-start gap-3 rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-red-200 sm:flex-row sm:items-center sm:justify-between'>
@@ -115,7 +110,7 @@ const Payments = () => {
       {loading && payments.length === 0 ? (
         <PaymentSkeletons />
       ) : payments.length === 0 ? (
-        <Card className='flex flex-col items-center gap-4 rounded-2xl border border-dashed border-white/20 p-8 text-center'>
+        <Card className='flex flex-col items-center gap-4 rounded-xl !border-dashed p-8 text-center'>
           <CreditCardOffIcon sx={{ fontSize: '3rem', color: 'text.secondary' }} />
           <div>
             <h2 className='!mb-2 !text-xl !font-semibold'>No payment history</h2>
@@ -124,7 +119,7 @@ const Payments = () => {
         </Card>
       ) : (
         <>
-          <TableContainer component={Card} className='!hidden overflow-hidden !rounded-2xl md:!block'>
+          <TableContainer component={Card} className='!hidden overflow-hidden !rounded-xl md:!block'>
             <Table aria-label='Payment history'>
               <TableHead>
                 <TableRow>
@@ -168,10 +163,10 @@ const Payments = () => {
 
           <div className='space-y-4 md:hidden'>
             {payments.map((payment) => (
-              <Card key={payment.orderId} className='min-w-0 rounded-2xl p-5'>
+              <Card key={payment.orderId} className='min-w-0 rounded-xl p-5'>
                 <div className='flex min-w-0 items-start justify-between gap-3'>
                   <div className='flex min-w-0 items-center gap-3'>
-                    <span className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-500/10 text-pink-300'>
+                    <span className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-300'>
                       <ReceiptLongIcon />
                     </span>
                     <div className='min-w-0'>

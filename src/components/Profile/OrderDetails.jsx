@@ -36,7 +36,7 @@ const OrderTimeline = ({ status }) => {
       {ORDER_STAGES.map((stage, index) => {
         const completed = index <= activeIndex
         return (
-          <li key={stage} className={`rounded-xl border p-3 ${completed ? 'border-pink-500/40 bg-pink-500/10 text-pink-100' : 'border-white/10 text-gray-500'}`}>
+          <li key={stage} className={`rounded-xl border p-3 ${completed ? 'border-orange-500/40 bg-orange-500/10 text-orange-100' : 'border-slate-400/15 text-gray-500'}`}>
             <div className='flex items-center gap-2'>
               {completed ? <CheckCircleIcon fontSize='small' /> : <RadioButtonUncheckedIcon fontSize='small' />}
               <span className='text-xs font-medium capitalize'>{statusLabel(stage)}</span>
@@ -86,7 +86,7 @@ const OrderDetails = () => {
 
       <header className='flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between'>
         <div>
-          <p className='text-sm font-medium uppercase tracking-[0.18em] text-pink-400'>Order details</p>
+          <p className='text-sm font-medium uppercase tracking-[0.18em] text-orange-400'>Order details</p>
           <h1 className='!m-0 !mt-2 !text-2xl !font-semibold sm:!text-3xl'>Order #{order.id}</h1>
           <p className='mt-2 text-sm text-gray-400'>{formatDate(order.createdAt)}</p>
         </div>
@@ -96,13 +96,13 @@ const OrderDetails = () => {
         </div>
       </header>
 
-      <Card className='rounded-2xl p-5'>
+      <Card className='rounded-xl p-5'>
         <h2 className='!mb-4 !text-lg !font-semibold'>Order progress</h2>
         <OrderTimeline status={order.orderStatus} />
       </Card>
 
       <div className='grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(260px,0.8fr)]'>
-        <Card className='min-w-0 rounded-2xl p-5'>
+        <Card className='min-w-0 rounded-xl p-5'>
           <div className='mb-4 flex items-center justify-between gap-3'>
             <div>
               <h2 className='!m-0 !text-lg !font-semibold'>Items</h2>
@@ -137,7 +137,7 @@ const OrderDetails = () => {
         </Card>
 
         <div className='space-y-6'>
-          <Card className='rounded-2xl p-5'>
+          <Card className='rounded-xl p-5'>
             <h2 className='!mb-3 !text-lg !font-semibold'>Delivery address</h2>
             <address className='space-y-1 text-sm not-italic text-gray-300'>
               <p className='font-medium text-white'>{address.fullName || 'Name unavailable'}</p>
@@ -148,7 +148,7 @@ const OrderDetails = () => {
           </Card>
 
           {canCancel && (
-            <Card className='rounded-2xl border border-red-500/20 p-5'>
+            <Card className='rounded-xl border border-red-500/20 p-5'>
               <h2 className='!mb-2 !text-lg !font-semibold'>Need to cancel?</h2>
               <p className='mb-4 text-sm text-gray-400'>Pending unpaid orders can be cancelled before payment.</p>
               <Button color='error' variant='outlined' disabled={loading} onClick={handleCancel}>

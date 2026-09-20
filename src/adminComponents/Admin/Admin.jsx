@@ -42,10 +42,10 @@ export const Admin = () => {
   }, [dispatch, jwt, restaurantId])
 
   return (
-    <div className='min-h-screen min-w-0 bg-[#0f0d12]'>
+    <div className='min-h-screen min-w-0 bg-[var(--color-bg)]'>
       <AdminSidebar open={sidebarOpen} handleClose={() => setSidebarOpen(false)} />
 
-      <header className='sticky top-0 z-[1050] flex min-h-16 items-center gap-3 border-b border-white/10 bg-[#17131c]/95 px-4 backdrop-blur lg:ml-[260px] lg:px-8'>
+      <header className='sticky top-0 z-[1050] flex min-h-16 items-center gap-3 border-b border-slate-400/15 bg-[var(--color-bg)]/92 px-4 backdrop-blur-xl lg:ml-[260px] lg:px-8'>
         <IconButton
           className='lg:!hidden'
           aria-label='Open owner navigation'
@@ -55,11 +55,11 @@ export const Admin = () => {
         </IconButton>
         <div className='min-w-0'>
           <p className='truncate text-lg font-semibold'>{restaurant?.name}</p>
-          <p className='text-xs text-gray-400'>Restaurant owner portal</p>
+          <p className='text-xs font-medium uppercase tracking-[0.12em] text-orange-400'>Restaurant owner portal</p>
         </div>
       </header>
 
-      <main className='min-w-0 p-3 sm:p-5 lg:ml-[260px] lg:p-8'>
+      <main className='min-w-0 overflow-x-hidden p-4 sm:p-6 lg:ml-[260px] lg:p-8 xl:p-10'>
         <Routes>
           <Route index element={<RestaurantDashboard />} />
           <Route path='orders' element={<Orders />} />

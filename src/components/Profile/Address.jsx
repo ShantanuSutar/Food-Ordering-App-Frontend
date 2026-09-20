@@ -22,6 +22,7 @@ import AddressForm from '../Address/AddressForm'
 import { addressInitialValues } from '../Address/addressFormConfig'
 import AddressCard from '../Cart/AddressCard'
 import { addressKey, canonicalAddress } from '../util/address'
+import SectionHeader from '../ui/SectionHeader'
 
 const EMPTY_ADDRESSES = []
 
@@ -79,15 +80,9 @@ const Address = () => {
 
   return (
     <section className='space-y-6'>
-      <header className='flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between'>
-        <div>
-          <p className='text-sm font-medium uppercase tracking-[0.18em] text-pink-400'>My profile</p>
-          <h1 className='!m-0 !mt-2 !text-2xl !font-semibold sm:!text-3xl'>Saved addresses</h1>
-        </div>
-        <Button variant='contained' startIcon={<AddLocationAltIcon />} onClick={openCreateForm}>
+      <SectionHeader eyebrow='My profile' title='Saved addresses' description='Manage the addresses available during checkout.' action={<Button variant='contained' startIcon={<AddLocationAltIcon />} onClick={openCreateForm}>
           Add address
-        </Button>
-      </header>
+        </Button>} />
 
       {error && (
         <div className='flex flex-col items-start gap-3 rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-red-200 sm:flex-row sm:items-center sm:justify-between'>
@@ -105,7 +100,7 @@ const Address = () => {
           ))}
         </div>
       ) : addresses.length === 0 ? (
-        <Card className='flex flex-col items-center gap-4 rounded-2xl border border-dashed border-white/20 p-8 text-center'>
+        <Card className='flex flex-col items-center gap-4 rounded-xl !border-dashed p-8 text-center'>
           <AddLocationAltIcon sx={{ fontSize: '3rem', color: 'text.secondary' }} />
           <div>
             <h2 className='!mb-2 !text-xl !font-semibold'>No saved addresses</h2>

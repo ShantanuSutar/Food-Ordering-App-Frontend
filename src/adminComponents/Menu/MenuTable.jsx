@@ -36,13 +36,13 @@ export const MenuTable = ({ limit }) => {
       <CardContent className='space-y-3 !pt-0'>
         {error && <p className='rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-red-300'>{error}</p>}
         {visibleItems.length === 0 ? (
-          <div className='rounded-xl border border-dashed border-white/15 p-8 text-center text-gray-400'>
+          <div className='rounded-xl border border-dashed border-slate-400/20 p-8 text-center text-gray-400'>
             No menu items yet. Add the first item to start receiving orders.
           </div>
         ) : visibleItems.map((item) => (
           <div
             key={item.id}
-            className='grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-xl border border-white/10 p-3'
+            className='grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-xl border border-slate-400/15 p-3'
           >
             <Avatar variant='rounded' src={item.images?.[0]} alt={item.name} sx={{ width: 56, height: 56 }} />
             <div className='min-w-0'>

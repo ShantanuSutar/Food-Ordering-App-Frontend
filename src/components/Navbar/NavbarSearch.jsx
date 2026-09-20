@@ -14,7 +14,7 @@ const SearchResultImage = ({ item }) => {
   const showImage = image && failedImage !== image
 
   return (
-    <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-white/10 sm:h-20 sm:w-20">
+    <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-slate-800 sm:h-20 sm:w-20">
       {showImage ? (
         <img
           src={image}
@@ -141,7 +141,7 @@ export const NavbarSearch = () => {
         <section
           id="navbar-food-search"
           role="search"
-          className="fixed inset-x-0 top-[4.25rem] z-[70] border-y border-white/10 bg-[#16171d]/98 p-4 shadow-2xl backdrop-blur-xl sm:absolute sm:left-auto sm:right-0 sm:top-[calc(100%+0.8rem)] sm:w-[min(42rem,calc(100vw-2rem))] sm:rounded-2xl sm:border"
+          className="fixed inset-x-0 top-16 z-[70] border-y border-slate-400/20 bg-[var(--color-surface)]/98 p-4 shadow-[0_20px_50px_rgba(2,6,23,0.42)] backdrop-blur-xl sm:absolute sm:left-auto sm:right-0 sm:top-[calc(100%+0.8rem)] sm:w-[min(42rem,calc(100vw-2rem))] sm:rounded-xl sm:border"
         >
           <div className="relative">
             <SearchIcon className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
@@ -154,7 +154,7 @@ export const NavbarSearch = () => {
               placeholder="Search food, category, or restaurant"
               aria-label="Search food, category, or restaurant"
               aria-controls="navbar-search-results"
-              className="w-full rounded-xl border border-white/15 bg-white/[0.06] py-3 pl-12 pr-12 text-base text-white outline-none transition placeholder:text-gray-500 focus:border-pink-400 focus:ring-2 focus:ring-pink-500/25"
+              className="w-full rounded-lg border border-slate-400/25 bg-[var(--color-surface-2)] py-3 pl-12 pr-12 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-orange-400 focus:ring-2 focus:ring-orange-500/25"
             />
             {searchLoading && (
               <CircularProgress
@@ -207,17 +207,17 @@ export const NavbarSearch = () => {
                       type="button"
                       onClick={() => selectResult(item)}
                       onKeyDown={(event) => handleResultKeyDown(event, index)}
-                      className="flex w-full items-center gap-3 rounded-xl p-2 text-left transition hover:bg-white/[0.08] focus:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500"
+                      className="flex w-full items-center gap-3 rounded-lg p-2 text-left transition hover:bg-slate-600/35 focus:bg-slate-600/35 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
                     >
                       <SearchResultImage item={item} />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-start justify-between gap-3">
                           <p className="truncate font-semibold text-gray-100">{item.name}</p>
-                          <span className="shrink-0 font-semibold text-pink-400">₹{item.price}</span>
+                          <span className="shrink-0 font-bold text-orange-400">₹{item.price}</span>
                         </div>
                         <p className="truncate text-sm text-gray-400">{item.restaurantName}</p>
                         {item.categoryName && (
-                          <span className="mt-1 inline-block rounded-full bg-white/[0.08] px-2 py-0.5 text-xs text-gray-400">
+                          <span className="mt-1 inline-block rounded-full bg-slate-700/50 px-2 py-0.5 text-xs text-gray-400">
                             {item.categoryName}
                           </span>
                         )}

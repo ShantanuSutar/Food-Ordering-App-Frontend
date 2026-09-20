@@ -78,7 +78,7 @@ export const OrderTable = ({ limit, status = 'ALL', query = '', fromDate = '', t
       <CardHeader title={limit ? 'Recent orders' : 'Restaurant orders'} />
       <CardContent className='space-y-3 !pt-0'>
         {visibleOrders.length === 0 ? (
-          <div className='rounded-xl border border-dashed border-white/15 p-8 text-center text-gray-400'>
+          <div className='rounded-xl border border-dashed border-slate-400/20 p-8 text-center text-gray-400'>
             No orders found.
           </div>
         ) : visibleOrders.map((order) => {
@@ -89,7 +89,7 @@ export const OrderTable = ({ limit, status = 'ALL', query = '', fromDate = '', t
           return (
             <Box
               key={order.id}
-              className='grid gap-4 rounded-xl border border-white/10 p-4 md:grid-cols-[auto_1fr_auto] md:items-center'
+              className='grid gap-4 rounded-xl border border-slate-400/15 p-4 md:grid-cols-[auto_1fr_auto] md:items-center'
             >
               <AvatarGroup max={3} sx={{ justifyContent: { xs: 'flex-end', md: 'flex-start' } }}>
                 {(order.items || []).map((item) => (

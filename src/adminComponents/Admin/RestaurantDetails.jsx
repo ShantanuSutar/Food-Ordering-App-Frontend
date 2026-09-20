@@ -13,7 +13,7 @@ const modalStyle = {
 }
 
 const Detail = ({ label, value }) => (
-  <div className='grid gap-1 border-b border-white/5 py-3 sm:grid-cols-[150px_1fr]'>
+  <div className='grid gap-1 border-b border-slate-400/10 py-3 sm:grid-cols-[150px_1fr]'>
     <dt className='text-sm text-gray-400'>{label}</dt>
     <dd className='break-words'>{value || 'Not provided'}</dd>
   </div>

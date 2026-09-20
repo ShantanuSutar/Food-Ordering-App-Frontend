@@ -39,11 +39,11 @@ export const FoodCategoryTable = () => {
         <CardContent className='grid gap-3 !pt-0 sm:grid-cols-2 lg:grid-cols-3'>
           {error && <p className='col-span-full rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-red-300'>{error}</p>}
           {categories.length === 0 ? (
-            <div className='col-span-full rounded-xl border border-dashed border-white/15 p-8 text-center text-gray-400'>
+            <div className='col-span-full rounded-xl border border-dashed border-slate-400/20 p-8 text-center text-gray-400'>
               No food categories yet. Create one before adding menu items.
             </div>
           ) : categories.map((item) => (
-            <div key={item.id} className='flex items-center justify-between gap-3 rounded-xl border border-white/10 p-4'>
+            <div key={item.id} className='flex items-center justify-between gap-3 rounded-xl border border-slate-400/15 p-4'>
               <div className='min-w-0'>
                 <p className='truncate font-medium'>{item.name}</p>
                 <p className='mt-1 text-xs text-gray-500'>Category #{item.id}</p>

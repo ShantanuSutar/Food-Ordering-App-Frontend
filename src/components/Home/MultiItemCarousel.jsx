@@ -15,7 +15,7 @@ const TopMealsSkeleton = () => (
         key={`top-meal-skeleton-${index}`}
         className="flex-[0_0_100%] px-2 sm:flex-[0_0_50%] md:flex-[0_0_33.333%] lg:flex-[0_0_20%]"
       >
-        <div className="animate-pulse overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+        <div className="animate-pulse overflow-hidden rounded-xl border border-slate-400/15 bg-[var(--color-surface)]">
           <div className="aspect-[4/3] bg-white/10" />
           <div className="space-y-3 p-4">
             <div className="h-5 w-3/4 rounded bg-white/10" />
@@ -75,7 +75,7 @@ export const MultiItemCarousel = ({ items = [], loading = false, error = null })
 
   if (items.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.03] px-6 py-12 text-center text-gray-400">
+      <div className="empty-state px-6 py-12 text-center">
         {error
           ? "Top meals could not be loaded right now. Please try again later."
           : "No available meals from open restaurants yet."}
@@ -94,14 +94,13 @@ export const MultiItemCarousel = ({ items = [], loading = false, error = null })
           flex items-center justify-center
           w-11 h-11
           rounded-full
-          bg-white/10
+          bg-[var(--color-surface-2)]/95
           backdrop-blur-md
-          border border-white/20
+          border border-slate-400/25
           text-white
           shadow-lg
-          hover:bg-pink-600
-          hover:scale-110
-          transition-all duration-300
+          hover:bg-orange-600
+          transition-colors duration-200
         "
       >
         <ChevronLeftIcon />
@@ -142,14 +141,13 @@ export const MultiItemCarousel = ({ items = [], loading = false, error = null })
           flex items-center justify-center
           w-11 h-11
           rounded-full
-          bg-white/10
+          bg-[var(--color-surface-2)]/95
           backdrop-blur-md
-          border border-white/20
+          border border-slate-400/25
           text-white
           shadow-lg
-          hover:bg-pink-600
-          hover:scale-110
-          transition-all duration-300
+          hover:bg-orange-600
+          transition-colors duration-200
         "
       >
         <ChevronRightIcon />

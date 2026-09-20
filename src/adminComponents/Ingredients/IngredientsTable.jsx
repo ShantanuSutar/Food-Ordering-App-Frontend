@@ -52,11 +52,11 @@ export const IngredientsTable = () => {
           {loading && ingredients.length === 0 ? (
             <div className='flex min-h-40 items-center justify-center'><CircularProgress /></div>
           ) : ingredients.length === 0 ? (
-            <div className='rounded-xl border border-dashed border-white/15 p-6 text-center text-gray-400'>
+            <div className='rounded-xl border border-dashed border-slate-400/20 p-6 text-center text-gray-400'>
               No ingredients created yet.
             </div>
           ) : ingredients.map((item) => (
-            <div key={item.id} className='flex items-center justify-between gap-3 rounded-xl border border-white/10 p-3'>
+            <div key={item.id} className='flex items-center justify-between gap-3 rounded-xl border border-slate-400/15 p-3'>
               <div className='min-w-0'>
                 <p className='truncate font-medium'>{item.name}</p>
                 <p className='text-sm text-gray-400'>{item.category?.name || 'Uncategorised'}</p>
