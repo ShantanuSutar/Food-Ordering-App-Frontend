@@ -28,6 +28,7 @@ const statusDetails = (status) => {
       return { label: 'Pending', color: 'warning' }
     case 'PAYMENT_FAILED':
       return { label: 'Failed', color: 'error' }
+    case 'PAYMENT_CANCELLED':
     case 'CANCELLED':
     case 'CANCELED':
       return { label: 'Cancelled', color: 'default' }
@@ -45,10 +46,10 @@ const formatMoney = (amount, currency) => {
   try {
     return new Intl.NumberFormat(undefined, {
       style: 'currency',
-      currency: (currency || 'USD').toUpperCase(),
+      currency: (currency || 'INR').toUpperCase(),
     }).format(amount / 100)
   } catch {
-    return `${(amount / 100).toFixed(2)} ${(currency || 'USD').toUpperCase()}`
+    return `${(amount / 100).toFixed(2)} ${(currency || 'INR').toUpperCase()}`
   }
 }
 
@@ -90,7 +91,7 @@ const Payments = () => {
     if (jwt) dispatch(getPaymentHistory(jwt))
   }, [dispatch, jwt])
 
-  const viewOrder = () => navigate('/my-profile/orders')
+  const viewOrder = (orderId) => navigate(`/my-profile/orders/${orderId}`)
 
   return (
     <section className='min-w-0 space-y-6'>
@@ -155,7 +156,7 @@ const Payments = () => {
                     </TableCell>
                     <TableCell><PaymentStatusChip status={payment.paymentStatus} /></TableCell>
                     <TableCell align='right'>
-                      <Button size='small' endIcon={<ArrowForwardIcon />} onClick={viewOrder}>
+                      <Button size='small' endIcon={<ArrowForwardIcon />} onClick={() => viewOrder(payment.orderId)}>
                         View order
                       </Button>
                     </TableCell>
@@ -204,7 +205,7 @@ const Payments = () => {
                   )}
                 </dl>
 
-                <Button className='!mt-4 !px-0' endIcon={<ArrowForwardIcon />} onClick={viewOrder}>
+                <Button className='!mt-4 !px-0' endIcon={<ArrowForwardIcon />} onClick={() => viewOrder(payment.orderId)}>
                   View order
                 </Button>
               </Card>

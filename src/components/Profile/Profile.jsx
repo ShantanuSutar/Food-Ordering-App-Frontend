@@ -5,6 +5,7 @@ import { Route, Routes } from 'react-router-dom'
 import ProfileNavigation from './ProfileNavigation'
 import UserProfile from './UserProfile'
 import Orders from './Orders'
+import OrderDetails from './OrderDetails'
 import Address from './Address'
 import Favourites from './Favourites'
 import Events from './Events'
@@ -52,6 +53,7 @@ const Profile = () => {
             <Routes>
               <Route index element={<UserProfile />} />
               <Route path='orders' element={<Orders />} />
+              <Route path='orders/:orderId' element={<OrderDetails />} />
               <Route path='address' element={<Address />} />
               <Route path='favourites' element={<Favourites />} />
               <Route path='payments' element={<Payments />} />

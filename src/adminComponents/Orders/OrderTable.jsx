@@ -34,11 +34,30 @@ const OrderItems = ({ items = [] }) => (
   </div>
 )
 
-export const OrderTable = ({ limit, status = 'ALL' }) => {
+const isWithinDateRange = (createdAt, fromDate, toDate) => {
+  if (!fromDate && !toDate) return true
+  const created = new Date(createdAt)
+  if (Number.isNaN(created.getTime())) return false
+  if (fromDate && created < new Date(`${fromDate}T00:00:00`)) return false
+  if (toDate && created > new Date(`${toDate}T23:59:59.999`)) return false
+  return true
+}
+
+export const OrderTable = ({ limit, status = 'ALL', query = '', fromDate = '', toDate = '' }) => {
   const dispatch = useDispatch()
   const jwt = localStorage.getItem('jwt')
   const { orders, loading, error } = useSelector((store) => store.restaurantOrder)
-  const filteredOrders = status === 'ALL' ? orders : orders.filter((order) => order.orderStatus === status)
+  const normalizedQuery = query.trim().toLowerCase()
+  const filteredOrders = orders.filter((order) => {
+    const matchesStatus = status === 'ALL' || order.orderStatus === status
+    const searchable = [
+      order.id,
+      order.customer?.fullName,
+      ...(order.items || []).flatMap((item) => [item.itemName, item.food?.name]),
+    ].filter(Boolean).join(' ').toLowerCase()
+    const matchesQuery = !normalizedQuery || searchable.includes(normalizedQuery)
+    return matchesStatus && matchesQuery && isWithinDateRange(order.createdAt, fromDate, toDate)
+  })
   const visibleOrders = typeof limit === 'number' ? filteredOrders.slice(0, limit) : filteredOrders
 
   const handleUpdateOrder = (orderId, orderStatus) => {

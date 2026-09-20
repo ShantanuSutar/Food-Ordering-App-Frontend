@@ -167,10 +167,9 @@ const Cart = () => {
             <p className='py-5 font-extralight'>Bill Details</p>
             <div className='space-y-3 text-gray-400'>
               <div className='flex justify-between'><p>Item Total</p><p>₹{itemTotal}</p></div>
-              <div className='flex justify-between'><p>Delivery Fee</p><p>₹21</p></div>
-              <div className='flex justify-between'><p>GST and Restaurant Charges</p><p>₹33</p></div>
+              <div className='flex justify-between'><p>Additional charges</p><p>₹0</p></div>
               <Divider />
-              <div className='flex justify-between font-medium text-white'><p>Total Pay</p><p>₹{itemTotal + 54}</p></div>
+              <div className='flex justify-between font-medium text-white'><p>Total Pay</p><p>₹{itemTotal}</p></div>
             </div>
           </div>
         </section>

@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
+import { Alert, CircularProgress } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-import { getUsersOrders } from '../../State/Order/Action'
+import { cancelOrder, getUsersOrders } from '../../State/Order/Action'
 import OrderCard from './OrderCard'
 
 const Orders = () => {
-  const orders = useSelector((store) => store.order.orders || [])
+  const { orders = [], loading, error } = useSelector((store) => store.order)
   const jwt = localStorage.getItem('jwt')
   const dispatch = useDispatch()
 
@@ -12,9 +13,10 @@ const Orders = () => {
     if (jwt) dispatch(getUsersOrders(jwt))
   }, [dispatch, jwt])
 
-  const orderItems = orders.flatMap((order) =>
-    (order.items || []).map((item) => ({ item, order })),
-  )
+  const handleCancel = async (order) => {
+    const confirmed = window.confirm(`Cancel order #${order.id}? This cannot be undone.`)
+    if (confirmed) await dispatch(cancelOrder({ orderId: order.id, jwt }))
+  }
 
   return (
     <section className='space-y-6'>
@@ -23,14 +25,22 @@ const Orders = () => {
         <h1 className='!m-0 !mt-2 !text-2xl !font-semibold sm:!text-3xl'>My orders</h1>
       </header>
 
-      {orderItems.length === 0 ? (
+      {loading && orders.length === 0 ? (
+        <div className='flex min-h-48 items-center justify-center' aria-label='Loading orders'>
+          <CircularProgress />
+        </div>
+      ) : error && orders.length === 0 ? (
+        <Alert severity='error' action={<button className='font-medium' onClick={() => dispatch(getUsersOrders(jwt))}>Retry</button>}>
+          {error}
+        </Alert>
+      ) : orders.length === 0 ? (
         <div className='rounded-2xl border border-dashed border-white/15 p-8 text-center text-gray-400'>
           You have not placed any orders yet.
         </div>
       ) : (
         <div className='mx-auto w-full max-w-4xl space-y-4'>
-          {orderItems.map(({ item, order }) => (
-            <OrderCard key={item.id ?? `${order.id}-${item.food?.id}`} item={item} order={order} />
+          {orders.map((order) => (
+            <OrderCard key={order.id} order={order} onCancel={handleCancel} cancelling={loading} />
           ))}
         </div>
       )}
