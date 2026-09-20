@@ -1,78 +1,57 @@
 import { Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { createIngredient } from '../../State/Ingredients/Action';
 
-export const CreateIngredientForm = () => {
+import { createIngredient, updateIngredient } from '../../State/Ingredients/Action'
 
-    const dispatch = useDispatch();
-    const jwt = localStorage.getItem("jwt")
-    const {restaurant, ingredients} = useSelector(store => store)
+export const CreateIngredientForm = ({ ingredient, onSaved }) => {
+  const dispatch = useDispatch()
+  const jwt = localStorage.getItem('jwt')
+  const restaurantId = useSelector((store) => store.restaurant.usersRestaurant?.id)
+  const ingredients = useSelector((store) => store.ingredients)
+  const [formData, setFormData] = useState({
+    name: ingredient?.name || '',
+    categoryId: ingredient?.category?.id || '',
+  })
 
-    const [formData, setFormData] = useState({ 
-        categoryName: "", 
-        categoryId: "" })
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const data = {
-            ...formData,
-            restaurantId: restaurant.usersRestaurant.id
-        }
-        dispatch(createIngredient({data, jwt}))
-    }
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    if (!restaurantId) return
+    const saved = ingredient
+      ? await dispatch(updateIngredient({ id: ingredient.id, data: { ...formData, restaurantId }, jwt }))
+      : await dispatch(createIngredient({ data: { ...formData, restaurantId }, jwt }))
+    if (saved) onSaved?.()
+  }
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData, [name]: value
-        })
-    }
-
-    return (
-        <div className=' p-5'>
-            <h2 className=' text-gray-400 text-center text-xl   pb-10'>Create Ingredient Category</h2>
-            <form onSubmit={handleSubmit}>
-
-                <Stack spacing={3}>
-
-                    <TextField
-                        fullWidth
-                        id="name"
-                        name="name"
-                        label="Name"
-                        variant="outlined"
-                        onChange={handleInputChange}
-                        value={formData.name}
-                    />
-
-                    <FormControl fullWidth>
-                        <InputLabel id="category-label">
-                            Category
-                        </InputLabel>
-
-                        <Select
-                            labelId="category-label"
-                            id="category"
-                            value={formData.categoryId}
-                            label="Category"
-                            onChange={handleInputChange}
-                            name="categoryId"
-                        >
-                            {ingredients?.category?.map((item) => <MenuItem value={item.id}>{item.name}</MenuItem>)}
-                        </Select>
-                    </FormControl>
-
-                    <Button
-                        variant="contained"
-                        type="submit"
-                        sx={{ alignSelf: "flex-start" }}
-                    >
-                        Create Ingredient
-                    </Button>
-
-                </Stack>
-
-            </form>
-        </div>
-    )
+  return (
+    <div className='p-2'>
+      <h2 id='ingredient-form-title' className='pb-6 text-center text-xl font-semibold'>
+        {ingredient ? 'Edit ingredient' : 'Create ingredient'}
+      </h2>
+      <form onSubmit={handleSubmit}>
+        <Stack spacing={3}>
+          <TextField
+            fullWidth name='name' label='Name' value={formData.name}
+            onChange={(event) => setFormData({ ...formData, name: event.target.value })}
+          />
+          <FormControl fullWidth>
+            <InputLabel id='ingredient-category-label'>Category</InputLabel>
+            <Select
+              labelId='ingredient-category-label' name='categoryId' label='Category'
+              value={formData.categoryId}
+              onChange={(event) => setFormData({ ...formData, categoryId: event.target.value })}
+            >
+              {ingredients.category.map((item) => <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>)}
+            </Select>
+          </FormControl>
+          <Button
+            variant='contained' type='submit'
+            disabled={!formData.name.trim() || !formData.categoryId || ingredients.loading}
+          >
+            {ingredient ? 'Save changes' : 'Create ingredient'}
+          </Button>
+        </Stack>
+      </form>
+    </div>
+  )
 }

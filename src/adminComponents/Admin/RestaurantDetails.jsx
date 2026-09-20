@@ -1,172 +1,114 @@
-import { Button, Card, CardContent, CardHeader, Grid } from '@mui/material'
-import React from 'react'
-import InstagramIcon from '@mui/icons-material/Instagram';
-import TwitterIcon from '@mui/icons-material/Twitter';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateRestaurantStatus } from '../../State/Restaurant/Action';
+import { Edit, Instagram, Twitter } from '@mui/icons-material'
+import { Box, Button, Card, CardContent, CardHeader, Chip, Modal } from '@mui/material'
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
+import { updateRestaurantStatus } from '../../State/Restaurant/Action'
+import { CreateRestaurantForm } from '../CreateRestaurantForm/CreateRestaurantForm'
+
+const modalStyle = {
+  position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+  width: { xs: 'calc(100% - 24px)', md: 'min(900px, calc(100% - 48px))' },
+  maxHeight: '92vh', overflowY: 'auto', bgcolor: 'background.paper', borderRadius: 3, boxShadow: 24,
+}
+
+const Detail = ({ label, value }) => (
+  <div className='grid gap-1 border-b border-white/5 py-3 sm:grid-cols-[150px_1fr]'>
+    <dt className='text-sm text-gray-400'>{label}</dt>
+    <dd className='break-words'>{value || 'Not provided'}</dd>
+  </div>
+)
 
 export const RestaurantDetails = () => {
+  const [editing, setEditing] = useState(false)
+  const restaurantState = useSelector((store) => store.restaurant)
+  const restaurant = restaurantState.usersRestaurant
+  const dispatch = useDispatch()
 
-  const {restaurant} = useSelector(store => store)
-  const dispatch = useDispatch();
+  if (!restaurant) return null
+
+  const address = restaurant.address || {}
+  const contact = restaurant.contactInformation || {}
 
   const handleRestaurantStatus = () => {
-    dispatch(updateRestaurantStatus({
-      restaurantId: restaurant.usersRestaurant.id,
-      jwt: localStorage.getItem("jwt")
-    }))
+    dispatch(updateRestaurantStatus({ restaurantId: restaurant.id, jwt: localStorage.getItem('jwt') }))
   }
-  return (
-    <div className=' lg:px-20 px-5 pb-10'>
-      <div className=' py-5 flex flex-col justify-center items-center gap-5'>
-        <div className='py-5 flex justify-center items-center gap-6'>
-          <h1 className='text-2xl font-black'>
-            {restaurant.usersRestaurant.name}
-          </h1>
 
+  return (
+    <div className='space-y-5'>
+      <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+        <div>
+          <div className='flex flex-wrap items-center gap-3'>
+            <h1 className='text-2xl font-bold'>{restaurant.name}</h1>
+            <Chip color={restaurant.open ? 'success' : 'default'} label={restaurant.open ? 'Open' : 'Closed'} />
+          </div>
+          <p className='mt-1 text-gray-400'>{restaurant.cuisineType}</p>
+        </div>
+        <div className='flex gap-2'>
+          <Button startIcon={<Edit />} variant='outlined' onClick={() => setEditing(true)}>Edit</Button>
           <Button
-            color={!restaurant.usersRestaurant.open ? "primary" : "error"}
-            variant='contained'
-            onClick={handleRestaurantStatus}
-            size='large'
+            color={restaurant.open ? 'error' : 'primary'} variant='contained'
+            disabled={restaurantState.loading} onClick={handleRestaurantStatus}
           >
-            {restaurant.usersRestaurant.open ? "Close" : "Open"}
+            {restaurant.open ? 'Close restaurant' : 'Open restaurant'}
           </Button>
         </div>
-        <Grid container spacing={2}>
-          <Grid item size={{ xs: 12 }}>
-            <Card>
-              <CardHeader title={<span className=' text-gray-300'>Restaurant</span>} />
-            </Card>
-            <CardContent>
-              <div className=' space-y-4 text-gray-200'>
-                <div className=' flex '>
-                  <p className=' w-48'>Owner</p>
-                  <p className=' text-gray-400'>
-                    <span className=' pr-5'>-</span>
-                      {restaurant.usersRestaurant.owner.fullName}
-                  </p>
-                </div>
-                <div className=' flex '>
-                  <p className=' w-48'>Restaurant Name</p>
-                  <p className=' text-gray-400'>
-                    <span className=' pr-5'>-</span>
-                    {restaurant.usersRestaurant.name}
-                  </p>
-                </div>
-                <div className=' flex '>
-                  <p className=' w-48'>Cuisine Type</p>
-                  <p className=' text-gray-400'>
-                    <span className=' pr-5'>-</span>
-                    {restaurant.usersRestaurant.cuisineType}
-                  </p>
-                </div>
-                <div className=' flex '>
-                  <p className=' w-48'>Opening Hours</p>
-                  <p className=' text-gray-400'>
-                    <span className=' pr-5'>-</span>
-                    {restaurant.usersRestaurant.openingHours}
-                  </p>
-                </div>
-                <div className=' flex '>
-                  <p className=' w-48'>Status</p>
-                  <p className=' text-gray-400'>
-                    <span className=' pr-5'>-</span>
-                    {restaurant.usersRestaurant.open ? <span className=' px-5 py-2 rounded-full bg-green-400 text-gray-950'>Open</span>
-                      : <span className=' px-5 py-2 rounded-full bg-red-400 text-gray-950'>Closed</span>}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Grid>
-          <Grid item size={{ xs: 12, lg: 6 }}>
-            <Card>
-              <CardHeader title={<span className=' text-gray-300'>Address</span>} />
-            </Card>
-            <CardContent>
-              <div className=' space-y-4 text-gray-200'>
-                <div className=' flex '>
-                  <p className=' w-48'>Country</p>
-                  <p className=' text-gray-400'>
-                    <span className=' pr-5'>-</span>
-                    Shantanu
-                  </p>
-                </div>
-                <div className=' flex '>
-                  <p className=' w-48'>City</p>
-                  <p className=' text-gray-400'>
-                    <span className=' pr-5'>-</span>
-                    indian fast food
-                  </p>
-                </div>
-                <div className=' flex '>
-                  <p className=' w-48'>Postal Code</p>
-                  <p className=' text-gray-400'>
-                    <span className=' pr-5'>-</span>
-                    indian
-                  </p>
-                </div>
-                <div className=' flex '>
-                  <p className=' w-48'>Street Address</p>
-                  <p className=' text-gray-400'>
-                    <span className=' pr-5'>-</span>
-                    monday - sunday 9am - 9pm
-                  </p>
-                </div>
-                
-              </div>
-            </CardContent>
-          </Grid>
-          <Grid item size={{ xs: 12, lg: 6 }}>
-            <Card>
-              <CardHeader title={<span className=' text-gray-300'>Contact</span>} />
-            </Card>
-            <CardContent>
-              <div className=' space-y-4 text-gray-200'>
-                <div className=' flex '>
-                  <p className=' w-48'>Email</p>
-                  <p className=' text-gray-400'>
-                    <span className=' pr-5'>-</span>
-                    {restaurant.usersRestaurant?.contactInformation?.email}
-                  </p>
-                </div>
-                <div className=' flex '>
-                  <p className=' w-48'>Mobile</p>
-                  <p className=' text-gray-400'>
-                    <span className=' pr-5'>-</span>
-                    {restaurant.usersRestaurant?.contactInformation?.mobile}
-                  </p>
-                </div>
-                <div className=' flex '>
-                  <p className=' w-48'>Social</p>
-                  <p className=' text-gray-400 flex items-center pb-3 gap-2'>
-                    <span className=' pr-5'>-</span>
-                    <div>
-                      <span className=' pr-5'>-</span>
-                      <a href={restaurant.usersRestaurant?.contactInformation?.instagram}>
-                        <InstagramIcon sx={{fontSize: "3rem"}} />
-                      </a>c
-                      <a href={restaurant.usersRestaurant?.contactInformation?.twitter}>
-                        <TwitterIcon sx={{fontSize: "3rem"}} />
-                      </a>
-                      <a href={restaurant.usersRestaurant?.contactInformation?.linkedin}>
-                        <LinkedInIcon sx={{fontSize: "3rem"}} />
-                      </a>
-                      <a href={restaurant.usersRestaurant?.contactInformation?.facebook}>
-                        <FacebookIcon sx={{fontSize: "3rem"}} />
-                      </a>
-                    </div>
-                  </p>
-                </div>
-                
-              </div>
-            </CardContent>
-          </Grid>
-        </Grid>
       </div>
+
+      {restaurant.images?.length > 0 && (
+        <div className='grid grid-cols-2 gap-3 md:grid-cols-4'>
+          {restaurant.images.slice(0, 4).map((image) => (
+            <img key={image} src={image} alt={restaurant.name} className='h-36 w-full rounded-xl object-cover' />
+          ))}
+        </div>
+      )}
+
+      <div className='grid gap-5 xl:grid-cols-2'>
+        <Card>
+          <CardHeader title='Restaurant' />
+          <CardContent className='!pt-0'>
+            <dl>
+              <Detail label='Owner' value={restaurant.owner?.fullName} />
+              <Detail label='Description' value={restaurant.description} />
+              <Detail label='Cuisine' value={restaurant.cuisineType} />
+              <Detail label='Opening hours' value={restaurant.openingHours} />
+            </dl>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader title='Address' />
+          <CardContent className='!pt-0'>
+            <dl>
+              <Detail label='Street' value={address.streetAddress} />
+              <Detail label='City' value={address.city} />
+              <Detail label='State' value={address.state} />
+              <Detail label='Postal code' value={address.postalCode} />
+              <Detail label='Country' value={address.country} />
+            </dl>
+          </CardContent>
+        </Card>
+
+        <Card className='xl:col-span-2'>
+          <CardHeader title='Contact' />
+          <CardContent className='!pt-0'>
+            <dl>
+              <Detail label='Email' value={contact.email} />
+              <Detail label='Mobile' value={contact.mobile} />
+            </dl>
+            <div className='mt-4 flex gap-2'>
+              {contact.instagram && <Button component='a' href={contact.instagram} target='_blank' rel='noreferrer' startIcon={<Instagram />}>Instagram</Button>}
+              {contact.twitter && <Button component='a' href={contact.twitter} target='_blank' rel='noreferrer' startIcon={<Twitter />}>Twitter/X</Button>}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Modal open={editing} onClose={() => setEditing(false)} aria-labelledby='edit-restaurant-title'>
+        <Box sx={modalStyle}>
+          <CreateRestaurantForm restaurant={restaurant} onSaved={() => setEditing(false)} />
+        </Box>
+      </Modal>
     </div>
   )
 }

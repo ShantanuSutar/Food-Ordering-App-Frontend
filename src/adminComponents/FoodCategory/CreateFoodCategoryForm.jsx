@@ -1,55 +1,35 @@
 import { Button, TextField } from '@mui/material'
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { createCategoryAction } from '../../State/Restaurant/Action'
+import { useDispatch, useSelector } from 'react-redux'
 
-export const CreateFoodCategoryForm = () => {
+import { createCategoryAction, updateCategoryAction } from '../../State/Restaurant/Action'
 
-    const [formData, setFormData] = useState({ categoryName: "", restaurantId: "" })
-    
-    const dispatch = useDispatch();
+export const CreateFoodCategoryForm = ({ category, onSaved }) => {
+  const [name, setName] = useState(category?.name || '')
+  const dispatch = useDispatch()
+  const loading = useSelector((store) => store.restaurant.loading)
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const data = {
-            name: formData.categoryName
-        }
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    if (!name.trim()) return
+    const jwt = localStorage.getItem('jwt')
+    const saved = category
+      ? await dispatch(updateCategoryAction({ categoryId: category.id, name: name.trim(), jwt }))
+      : await dispatch(createCategoryAction({ reqData: { name: name.trim() }, jwt }))
+    if (saved) onSaved?.()
+  }
 
-        dispatch(createCategoryAction({reqData: data, jwt: localStorage.getItem("jwt")}))
-    }
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData, [name]: value
-        })
-    }
-
-    return (
-        <div className=' p-5'>
-            <h2 className=' text-gray-400 text-center text-xl   pb-10'>Create Category Form</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-
-                <TextField
-                    fullWidth
-                    id="categoryName"
-                    name="categoryName"
-                    label="Food Category"
-                    variant="outlined"
-                    onChange={handleInputChange}
-                    value={formData.categoryName}
-                />
-
-                <div className="pt-4">
-                    <Button
-                        variant="contained"
-                        type="submit"
-                    >
-                        Create Category
-                    </Button>
-                </div>
-
-            </form>
-        </div>
-    )
+  return (
+    <div className='p-2'>
+      <h2 id='food-category-form-title' className='pb-6 text-center text-xl font-semibold'>
+        {category ? 'Edit food category' : 'Create food category'}
+      </h2>
+      <form onSubmit={handleSubmit} className='space-y-4'>
+        <TextField fullWidth name='categoryName' label='Category name' value={name} onChange={(event) => setName(event.target.value)} />
+        <Button fullWidth variant='contained' type='submit' disabled={!name.trim() || loading}>
+          {category ? 'Save changes' : 'Create category'}
+        </Button>
+      </form>
+    </div>
+  )
 }

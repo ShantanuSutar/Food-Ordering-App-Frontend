@@ -22,6 +22,8 @@ const restaurantsOrderReducer = (state = initialState, action) => {
         case GET_RESTAURANTS_ORDER_FAILURE:
         case UPDATE_ORDER_STATUS_FAILURE:
             return { ...state, loading: false, error: action.payload };
+        case "LOGOUT":
+            return initialState;
         default:
             return state;
     }

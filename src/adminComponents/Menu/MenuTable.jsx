@@ -1,83 +1,76 @@
-import { Avatar, Box, Card, CardActions, CardHeader, Chip, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
-import React, { useEffect } from 'react'
-import CreateIcon from "@mui/icons-material/Create"
-import { Delete } from '@mui/icons-material'
-import { useNavigate } from 'react-router-dom'
+import AddIcon from '@mui/icons-material/Add'
+import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
+import { Avatar, Button, Card, CardContent, CardHeader, Chip, CircularProgress, IconButton, Switch } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteFoodAction, getMenuItemsByRestaurantId } from '../../State/Menu/Action'
+import { useNavigate } from 'react-router-dom'
 
-export const MenuTable = () => {
-  const navigate = useNavigate();
+import { deleteFoodAction, updateMenuItemsAvailability } from '../../State/Menu/Action'
 
-  const dispatch = useDispatch();
-  const jwt = localStorage.getItem("jwt")
-  const { restaurant, ingredients, menu } = useSelector(store => store)
+export const MenuTable = ({ limit }) => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const jwt = localStorage.getItem('jwt')
+  const { menuItems, loading, error } = useSelector((store) => store.menu)
+  const visibleItems = typeof limit === 'number' ? menuItems.slice(0, limit) : menuItems
 
-  const handleDeleteFood = (foodId) => {
-    dispatch(deleteFoodAction({foodId, jwt}))
+  const handleDeleteFood = (food) => {
+    const confirmed = window.confirm(`Remove ${food.name} from the menu? Historical orders will be preserved.`)
+    if (confirmed) dispatch(deleteFoodAction({ foodId: food.id, jwt }))
   }
 
-  useEffect(() => {
-    dispatch(getMenuItemsByRestaurantId({
-      jwt,
-      restaurantId: restaurant.usersRestaurantId.id,
-      vegetarian: false,
-      nonveg: false,
-      seasonal: false,
-      foodCategory: ""
-    }))
-  }, [])
+  if (loading && menuItems.length === 0) {
+    return <div className='flex min-h-48 items-center justify-center'><CircularProgress /></div>
+  }
 
   return (
-    <Box>
-      <Card className=' mt-1'>
-        <CardHeader action={
-          <IconButton onClick={() => navigate("/admin/restaurant/add-menu")} aria-label='settings'>
-            <CreateIcon />
-          </IconButton>
-        } title={"Menu"} sx={{ paddingTop: 2, alignItems: "center" }} />
-        <CardActions />
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="left">Image</TableCell>
-                <TableCell align="right">Title</TableCell>
-                <TableCell align="right">Ingredients</TableCell>
-                <TableCell align="right">Price</TableCell>
-                <TableCell align="right">Availability</TableCell>
-                <TableCell align="right">Delete</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {menu.menuItems.map((item) => (
-                <TableRow
-                  key={item.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    <Avatar src={item.images[0]}></Avatar>
-
-                  </TableCell>
-                  <TableCell align="left">
-                    {item.name}
-                  </TableCell>
-                  <TableCell align="right">
-                    {item.ingredients.map((ingredient) => <Chip label={ingredient.name} />)}
-                  </TableCell>
-                  <TableCell align="right">₹{item.price}</TableCell>
-                  <TableCell align="right">{item.available ? "In stock" : "Out of stock"}</TableCell>
-                  <TableCell align="right">
-                    <IconButton color='primary' onClick={() => handleDeleteFood(item.id)}>
-                      <Delete />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
-    </Box>
+    <Card className='overflow-hidden'>
+      <CardHeader
+        title={limit ? 'Menu overview' : 'Menu items'}
+        action={(
+          <Button startIcon={<AddIcon />} onClick={() => navigate('/admin/restaurant/add-menu')}>
+            Add item
+          </Button>
+        )}
+      />
+      <CardContent className='space-y-3 !pt-0'>
+        {error && <p className='rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-red-300'>{error}</p>}
+        {visibleItems.length === 0 ? (
+          <div className='rounded-xl border border-dashed border-white/15 p-8 text-center text-gray-400'>
+            No menu items yet. Add the first item to start receiving orders.
+          </div>
+        ) : visibleItems.map((item) => (
+          <div
+            key={item.id}
+            className='grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-xl border border-white/10 p-3'
+          >
+            <Avatar variant='rounded' src={item.images?.[0]} alt={item.name} sx={{ width: 56, height: 56 }} />
+            <div className='min-w-0'>
+              <p className='truncate font-semibold'>{item.name}</p>
+              <p className='text-sm text-gray-400'>₹{item.price}</p>
+              <div className='mt-1 flex flex-wrap gap-1'>
+                {(item.ingredients || []).slice(0, 3).map((ingredient) => (
+                  <Chip key={ingredient.id ?? ingredient.name} size='small' label={ingredient.name} />
+                ))}
+              </div>
+            </div>
+            <div className='flex items-center gap-1'>
+              <Switch
+                checked={Boolean(item.available)}
+                disabled={loading}
+                inputProps={{ 'aria-label': `Toggle ${item.name} availability` }}
+                onChange={() => dispatch(updateMenuItemsAvailability({ foodId: item.id, jwt }))}
+              />
+              <IconButton aria-label={`Edit ${item.name}`} onClick={() => navigate(`/admin/restaurant/menu/${item.id}/edit`)}>
+                <EditIcon />
+              </IconButton>
+              <IconButton color='error' aria-label={`Remove ${item.name}`} onClick={() => handleDeleteFood(item)}>
+                <DeleteIcon />
+              </IconButton>
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
   )
 }

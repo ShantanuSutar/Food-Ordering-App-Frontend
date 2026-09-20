@@ -19,6 +19,7 @@ const initialState = {
 const menuItemReducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.CREATE_MENU_ITEM_REQUEST:
+        case actionTypes.UPDATE_MENU_ITEM_REQUEST:
         case actionTypes.GET_MENU_ITEMS_BY_RESTAURANT_ID_REQUEST:
         case actionTypes.DELETE_MENU_ITEM_REQUEST:
         case actionTypes.UPDATE_MENU_ITEMS_AVAILABILITY_REQUEST:
@@ -70,6 +71,7 @@ const menuItemReducer = (state = initialState, action) => {
             };
 
         case actionTypes.UPDATE_MENU_ITEMS_AVAILABILITY_SUCCESS:
+        case actionTypes.UPDATE_MENU_ITEM_SUCCESS:
             return {
                 ...state,
                 loading: false,
@@ -123,6 +125,7 @@ const menuItemReducer = (state = initialState, action) => {
             };
 
         case actionTypes.CREATE_MENU_ITEM_FAILURE:
+        case actionTypes.UPDATE_MENU_ITEM_FAILURE:
         case actionTypes.GET_MENU_ITEMS_BY_RESTAURANT_ID_FAILURE:
         case actionTypes.DELETE_MENU_ITEM_FAILURE:
         case actionTypes.UPDATE_MENU_ITEMS_AVAILABILITY_FAILURE:
@@ -132,6 +135,9 @@ const menuItemReducer = (state = initialState, action) => {
                 error: action.payload,
                 message: null,
             };
+
+        case "LOGOUT":
+            return initialState;
 
         default:
             return state;

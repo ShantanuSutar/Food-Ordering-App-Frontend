@@ -7,6 +7,9 @@ import {
     CREATE_MENU_ITEM_FAILURE,
     CREATE_MENU_ITEM_REQUEST,
     CREATE_MENU_ITEM_SUCCESS,
+    UPDATE_MENU_ITEM_FAILURE,
+    UPDATE_MENU_ITEM_REQUEST,
+    UPDATE_MENU_ITEM_SUCCESS,
     DELETE_MENU_ITEM_FAILURE,
     DELETE_MENU_ITEM_REQUEST,
     DELETE_MENU_ITEM_SUCCESS,
@@ -24,12 +27,11 @@ import {
     UPDATE_MENU_ITEMS_AVAILABILITY_SUCCESS
 } from "./ActionTypes";
 
-//localhost:5454/api/admin/ingredients/food/16
 export const createMenuItem = ({ menu, jwt }) => {
     return async (dispatch) => {
         dispatch({ type: CREATE_MENU_ITEM_REQUEST });
         try {
-            const { data } = await api.post("api/admin/food", menu,
+            const { data } = await api.post("/api/admin/food", menu,
                 {
                     headers: {
                         Authorization: `Bearer ${jwt}`,
@@ -37,10 +39,31 @@ export const createMenuItem = ({ menu, jwt }) => {
                 });
             dispatch({ type: CREATE_MENU_ITEM_SUCCESS, payload: data });
             notifySuccess("Menu item created", "menu-create");
+            return data;
         } catch (error) {
             const message = getApiErrorMessage(error, "Could not create menu item");
             dispatch({ type: CREATE_MENU_ITEM_FAILURE, payload: message });
             notifyError(error, "Could not create menu item", "menu-create");
+            return null;
+        }
+    }
+}
+
+export const updateMenuItem = ({ foodId, menu, jwt }) => {
+    return async (dispatch) => {
+        dispatch({ type: UPDATE_MENU_ITEM_REQUEST });
+        try {
+            const { data } = await api.put(`/api/admin/food/${foodId}/details`, menu, {
+                headers: { Authorization: `Bearer ${jwt}` },
+            });
+            dispatch({ type: UPDATE_MENU_ITEM_SUCCESS, payload: data });
+            notifySuccess("Menu item updated", `menu-update-${foodId}`);
+            return data;
+        } catch (error) {
+            const message = getApiErrorMessage(error, "Could not update menu item");
+            dispatch({ type: UPDATE_MENU_ITEM_FAILURE, payload: message });
+            notifyError(error, "Could not update menu item", `menu-update-${foodId}`);
+            return null;
         }
     }
 }
@@ -141,21 +164,6 @@ export const getTopMeals = () => {
 };
 
 
-// export const getAllIngredientsOfMenuItem = (reqData) => {
-//     return async (dispatch) => {
-//         dispatch({type: GETALL });
-//         try {
-//             const { data } = await api.get(
-//                 api / food / restaurant / ${ reqData.restaurantId }`,
-// {
-// headers: {
-// Authorization: Bearer ${reqData.jwt}`,
-// },
-//     }
-// );
-// dispatch(getMenuItems By RestaurantIdSuccess(data)):
-
-
 export const updateMenuItemsAvailability = ({ foodId, jwt }) => {
     return async (dispatch) => {
         dispatch({ type: UPDATE_MENU_ITEMS_AVAILABILITY_REQUEST });
@@ -190,7 +198,7 @@ export const deleteFoodAction = ({ foodId, jwt }) =>
                 },
             });
             dispatch({ type: DELETE_MENU_ITEM_SUCCESS, payload: foodId });
-            notifySuccess("Menu item deleted", `menu-delete-${foodId}`);
+            notifySuccess("Menu item removed", `menu-delete-${foodId}`);
         } catch (error) {
             const message = getApiErrorMessage(error, "Could not delete menu item");
             dispatch({ type: DELETE_MENU_ITEM_FAILURE, payload: message });

@@ -1,119 +1,119 @@
-import { Avatar, AvatarGroup, Box, Button, Card, CardHeader, Chip, Menu, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchRestaurantsOrder, updateOrderStatus } from '../../State/Restaurant Order/Action';
+import { Avatar, AvatarGroup, Box, Card, CardContent, CardHeader, Chip, CircularProgress, MenuItem, Select } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
 
-const orders = [1, 1, 1, 1]
+import { updateOrderStatus } from '../../State/Restaurant Order/Action'
 
+const transitions = {
+  PENDING: ['CONFIRMED', 'CANCELLED'],
+  CONFIRMED: ['PREPARING', 'CANCELLED'],
+  PREPARING: ['READY', 'CANCELLED'],
+  READY: ['OUT_FOR_DELIVERY', 'CANCELLED'],
+  OUT_FOR_DELIVERY: ['DELIVERED'],
+}
 
-const orderStatus = [
-  {label: "Pending", value: "PENDING"},
-  {label: "Completed", value: "COMPLETED"},
-  {label: "All", value: "ALL"},
-]
+const statusLabel = (status = '') => status.replaceAll('_', ' ').toLowerCase()
 
-export const OrderTable = () => {
-  const dispatch = useDispatch();
-  const jwt = localStorage.getItem("jwt")
-  const { restaurant, ingredients, menu, restaurantOrder } = useSelector(store => store)
+const statusColor = (status) => {
+  if (status === 'DELIVERED' || status === 'COMPLETED') return 'success'
+  if (status === 'CANCELLED') return 'error'
+  if (status === 'OUT_FOR_DELIVERY' || status === 'READY') return 'info'
+  return 'warning'
+}
 
-  const id = React.useId();
-  const buttonId = `${id}-button`;
-  const menuId = `${id}-menu`;
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+const OrderItems = ({ items = [] }) => (
+  <div className='space-y-1'>
+    {items.map((orderItem) => (
+      <div key={orderItem.id ?? `${orderItem.food?.id}-${orderItem.food?.name}`} className='text-sm'>
+        <span>{orderItem.quantity}× {orderItem.food?.name || 'Archived item'}</span>
+        {orderItem.ingredients?.length > 0 && (
+          <span className='ml-2 text-xs text-gray-400'>({orderItem.ingredients.join(', ')})</span>
+        )}
+      </div>
+    ))}
+  </div>
+)
 
-  useEffect(() => {
-    dispatch(fetchRestaurantsOrder({
-      jwt,
-      restaurantId: restaurant.usersRestaurantId?.id
-    }))
-  }, [])
+export const OrderTable = ({ limit, status = 'ALL' }) => {
+  const dispatch = useDispatch()
+  const jwt = localStorage.getItem('jwt')
+  const { orders, loading, error } = useSelector((store) => store.restaurantOrder)
+  const filteredOrders = status === 'ALL' ? orders : orders.filter((order) => order.orderStatus === status)
+  const visibleOrders = typeof limit === 'number' ? filteredOrders.slice(0, limit) : filteredOrders
 
   const handleUpdateOrder = (orderId, orderStatus) => {
-    dispatch(updateOrderStatus({orderId, orders, jwt}))
-    handleClose();
+    if (!orderStatus) return
+    dispatch(updateOrderStatus({ orderId, orderStatus, jwt }))
+  }
+
+  if (loading && orders.length === 0) {
+    return <div className='flex min-h-48 items-center justify-center'><CircularProgress /></div>
+  }
+
+  if (error && orders.length === 0) {
+    return <p className='rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-300'>{error}</p>
   }
 
   return (
-    <Box>
-      <Card className=' mt-1'>
-        <CardHeader title={"All Orders"} sx={{ paddingTop: 2, alignItems: "center" }} />
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Id</TableCell>
-                <TableCell align="right">Image</TableCell>
-                <TableCell align="right">Customer</TableCell>
-                <TableCell align="right">Price</TableCell>
-                <TableCell align="right">Name</TableCell>
-                <TableCell align="right">Ingredients</TableCell>
-                <TableCell align="right">Status</TableCell>
-                <TableCell align="right">Update</TableCell>
-              
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {restaurantOrder?.orders?.map((item) => (
-                <TableRow
-                  key={item.name}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {item.id}
-                  </TableCell>
-                  <TableCell align="right">
-                    <AvatarGroup>
-                      {item.items.map((orderItem) => <Avatar src={orderItem.food?.images[0]} />)}
+    <Card className='overflow-hidden'>
+      <CardHeader title={limit ? 'Recent orders' : 'Restaurant orders'} />
+      <CardContent className='space-y-3 !pt-0'>
+        {visibleOrders.length === 0 ? (
+          <div className='rounded-xl border border-dashed border-white/15 p-8 text-center text-gray-400'>
+            No orders found.
+          </div>
+        ) : visibleOrders.map((order) => {
+          const allowed = order.paymentStatus === 'PAID'
+            ? transitions[order.orderStatus] || []
+            : order.orderStatus === 'PENDING' ? ['CANCELLED'] : []
 
-                    </AvatarGroup>
-                  </TableCell>
-                  <TableCell align="right">{item.customer?.fullName}</TableCell>
-                  <TableCell align="right">{item.totalAmount}</TableCell>
-                  <TableCell align="right">{item.items.map((orderItem) => <p>{orderItem.food?.name}</p>)}</TableCell>
-                  <TableCell align="right">
-                    {item.items.map((orderItem) => <div>
-                      {orderItem.ingredients.map((ingredient) => <Chip label={ingredient} />)}
-                    </div>)}</TableCell>
-                  <TableCell align="right">{item.orderStatus}</TableCell>
-                  <TableCell align="right">
-                    <Button
-                      id={buttonId}
-                      aria-controls={open ? menuId : undefined}
-                      aria-haspopup="true"
-                      aria-expanded={open}
-                      onClick={handleClick}
-                    >
-                      Update
-                    </Button>
-                    <Menu
-                      id={menuId}
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={handleClose}
-                      slotProps={{
-                        list: {
-                          'aria-labelledby': buttonId,
-                        },
-                      }}
-                    >
-                     {orderStatus.map((status) => <MenuItem onClick={() => handleUpdateOrder(item.id, status.value)}>{status.label}</MenuItem>)} 
-                    </Menu>
-                  </TableCell>
+          return (
+            <Box
+              key={order.id}
+              className='grid gap-4 rounded-xl border border-white/10 p-4 md:grid-cols-[auto_1fr_auto] md:items-center'
+            >
+              <AvatarGroup max={3} sx={{ justifyContent: { xs: 'flex-end', md: 'flex-start' } }}>
+                {(order.items || []).map((item) => (
+                  <Avatar
+                    key={item.id ?? item.food?.id}
+                    src={item.food?.images?.[0]}
+                    alt={item.food?.name || 'Order item'}
+                  />
+                ))}
+              </AvatarGroup>
 
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
-    </Box>
+              <div className='min-w-0 space-y-2'>
+                <div className='flex flex-wrap items-center gap-2'>
+                  <span className='font-semibold'>Order #{order.id}</span>
+                  <Chip size='small' color={statusColor(order.orderStatus)} label={statusLabel(order.orderStatus)} />
+                  <Chip
+                    size='small'
+                    variant='outlined'
+                    color={order.paymentStatus === 'PAID' ? 'success' : 'default'}
+                    label={statusLabel(order.paymentStatus || 'PENDING_PAYMENT')}
+                  />
+                </div>
+                <p className='text-sm text-gray-400'>{order.customer?.fullName || 'Customer unavailable'}</p>
+                <OrderItems items={order.items} />
+                <p className='font-medium'>₹{order.totalPrice ?? order.totalAmount ?? 0}</p>
+              </div>
+
+              <Select
+                size='small'
+                displayEmpty
+                value=''
+                disabled={allowed.length === 0 || loading}
+                onChange={(event) => handleUpdateOrder(order.id, event.target.value)}
+                sx={{ minWidth: 190 }}
+                renderValue={() => allowed.length ? 'Update status' : 'No actions'}
+              >
+                {allowed.map((status) => (
+                  <MenuItem key={status} value={status}>{statusLabel(status)}</MenuItem>
+                ))}
+              </Select>
+            </Box>
+          )
+        })}
+      </CardContent>
+    </Card>
   )
 }

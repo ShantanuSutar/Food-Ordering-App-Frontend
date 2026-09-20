@@ -1,91 +1,89 @@
-import { Box, Button, Card, CardActions, CardHeader, IconButton, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
-import React, { useEffect } from 'react'
-import CreateIcon from "@mui/icons-material/Create"
-import { Delete } from '@mui/icons-material'
-import { CreateFoodCategoryForm } from '../FoodCategory/CreateFoodCategoryForm'
-import { CreateIngredientForm } from './CreateIngredientForm'
+import { Add } from '@mui/icons-material'
+import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
+import { Alert, Box, Button, Card, CardContent, CardHeader, CircularProgress, IconButton, Modal, Switch } from '@mui/material'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getIngredientsOfRestaurant, updateStockOfIngredient } from '../../State/Ingredients/Action'
 
-const style = {
+import { deleteIngredient, updateStockOfIngredient } from '../../State/Ingredients/Action'
+import { CreateIngredientForm } from './CreateIngredientForm'
+
+const modalStyle = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: "30vw",
-  backgroundColor: 'background.paper',
-  border: '2px solid #000',
+  width: { xs: 'calc(100% - 32px)', sm: 460 },
+  maxHeight: '90vh',
+  overflowY: 'auto',
+  bgcolor: 'background.paper',
+  borderRadius: 3,
   boxShadow: 24,
-  p: 4,
-};
-
-const orders = [1, 1, 1, 1]
+  p: 3,
+}
 
 export const IngredientsTable = () => {
+  const [open, setOpen] = useState(false)
+  const [editingIngredient, setEditingIngredient] = useState(null)
+  const dispatch = useDispatch()
+  const jwt = localStorage.getItem('jwt')
+  const { ingredients, loading, error } = useSelector((store) => store.ingredients)
 
-  const dispatch = useDispatch();
-  const jwt = localStorage.getItem("jwt")
-  const {restaurant, ingredients} = useSelector(store => store)
+  const openForm = (ingredient = null) => {
+    setEditingIngredient(ingredient)
+    setOpen(true)
+  }
 
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  useEffect(() => {
-    dispatch(getIngredientsOfRestaurant({ jwt, id: restaurant.usersRestaurant.id }))
-  }, [])
-
-  const handleUpdateStock = (id) => {
-    dispatch(updateStockOfIngredient({id, jwt}))
+  const handleDelete = (ingredient) => {
+    if (window.confirm(`Delete ${ingredient.name}? Ingredients used by menu items cannot be deleted.`)) {
+      dispatch(deleteIngredient({ id: ingredient.id, jwt }))
+    }
   }
 
   return (
     <Box>
-      <Card className=' mt-1'>
-        <CardHeader action={
-          <IconButton onClick={handleOpen} aria-label='settings'>
-            <CreateIcon />
-          </IconButton>
-        } title={"Ingredients"} sx={{ paddingTop: 2, alignItems: "center" }} />
-        <CardActions />
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="left">Id</TableCell>
-                <TableCell align="left">Name</TableCell>
-                <TableCell align="left">Category</TableCell>
-                <TableCell align="right">Availability</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {ingredients?.ingredients?.map((item) => (
-                <TableRow
-                  key={row.name}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {1}
-                  </TableCell>
-                  <TableCell align="left">{item.name}</TableCell>
-                  <TableCell align="left">{item.category.name}</TableCell>
-                  <TableCell align="right">
-                    <Button onClick={() => handleUpdateStock(item.id)} >{item.inStock ? "In Stock" : "Out of Stock"}</Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+      <Card>
+        <CardHeader
+          title='Ingredients'
+          action={<Button startIcon={<Add />} onClick={() => openForm()}>Add</Button>}
+        />
+        <CardContent className='space-y-3 !pt-0'>
+          {error && <Alert severity='error'>{error}</Alert>}
+          {loading && ingredients.length === 0 ? (
+            <div className='flex min-h-40 items-center justify-center'><CircularProgress /></div>
+          ) : ingredients.length === 0 ? (
+            <div className='rounded-xl border border-dashed border-white/15 p-6 text-center text-gray-400'>
+              No ingredients created yet.
+            </div>
+          ) : ingredients.map((item) => (
+            <div key={item.id} className='flex items-center justify-between gap-3 rounded-xl border border-white/10 p-3'>
+              <div className='min-w-0'>
+                <p className='truncate font-medium'>{item.name}</p>
+                <p className='text-sm text-gray-400'>{item.category?.name || 'Uncategorised'}</p>
+              </div>
+              <div className='flex items-center gap-2'>
+                <span className='hidden text-sm text-gray-400 sm:inline'>{item.inStock ? 'In stock' : 'Out of stock'}</span>
+                <Switch
+                  checked={Boolean(item.inStock)}
+                  disabled={loading}
+                  inputProps={{ 'aria-label': `Toggle ${item.name} stock` }}
+                  onChange={() => dispatch(updateStockOfIngredient({ id: item.id, jwt }))}
+                />
+                <IconButton aria-label={`Edit ${item.name}`} disabled={loading} onClick={() => openForm(item)}><EditIcon /></IconButton>
+                <IconButton color='error' aria-label={`Delete ${item.name}`} disabled={loading} onClick={() => handleDelete(item)}><DeleteIcon /></IconButton>
+              </div>
+            </div>
+          ))}
+        </CardContent>
       </Card>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <CreateIngredientForm/>
+
+      <Modal open={open} onClose={() => setOpen(false)} aria-labelledby='ingredient-form-title'>
+        <Box sx={modalStyle}>
+          <CreateIngredientForm
+            key={editingIngredient?.id || 'new'}
+            ingredient={editingIngredient}
+            onSaved={() => setOpen(false)}
+          />
         </Box>
       </Modal>
     </Box>

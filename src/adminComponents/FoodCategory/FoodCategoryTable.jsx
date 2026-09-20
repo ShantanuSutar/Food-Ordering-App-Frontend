@@ -1,91 +1,70 @@
-import { Box, Button, Card, CardActions, CardHeader, IconButton, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
-import React, { useEffect } from 'react'
-import CreateIcon from "@mui/icons-material/Create"
-import { Delete } from '@mui/icons-material'
-import { CreateFoodCategoryForm } from './CreateFoodCategoryForm'
+import { Add } from '@mui/icons-material'
+import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
+import { Box, Button, Card, CardContent, CardHeader, IconButton, Modal } from '@mui/material'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getRestaurantsCategory } from '../../State/Restaurant/Action'
-import { fetchRestaurantsOrder } from '../../State/Restaurant Order/Action'
 
-const orders = [1, 1, 1, 1]
+import { deleteCategoryAction } from '../../State/Restaurant/Action'
+import { CreateFoodCategoryForm } from './CreateFoodCategoryForm'
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: "30vw",
-  backgroundColor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+const modalStyle = {
+  position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+  width: { xs: 'calc(100% - 32px)', sm: 420 }, bgcolor: 'background.paper',
+  borderRadius: 3, boxShadow: 24, p: 3,
+}
 
 export const FoodCategoryTable = () => {
-  
-  const { restaurant} = useSelector(store => store)
-  const dispatch = useDispatch();
-  const jwt = localStorage.getItem("jwt")
+  const [open, setOpen] = useState(false)
+  const [editingCategory, setEditingCategory] = useState(null)
+  const dispatch = useDispatch()
+  const { categories, loading, error } = useSelector((store) => store.restaurant)
+  const jwt = localStorage.getItem('jwt')
 
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const openForm = (category = null) => {
+    setEditingCategory(category)
+    setOpen(true)
+  }
 
-  
-    useEffect(() => {
-      dispatch(getRestaurantsCategory({jwt, restaurantId: restaurant.usersRestaurant?.id}))
-      dispatch(fetchRestaurantsOrder({jwt, restaurantId: restaurant.usersRestaurant?.id}))
-      // dispatch(getMenuItemsByRestaurantId())
-      // dispatch(getRestaurantById())
-    }, [])
-
-  
+  const handleDelete = (category) => {
+    if (window.confirm(`Delete ${category.name}? Categories used by menu items cannot be deleted.`)) {
+      dispatch(deleteCategoryAction({ categoryId: category.id, jwt }))
+    }
+  }
 
   return (
     <Box>
-      <Card className=' mt-1'>
-        <CardHeader action={
-          <IconButton onClick={handleOpen} aria-label='settings'>
-            <CreateIcon />
-          </IconButton>
-        } title={"Food Category"} sx={{ paddingTop: 2, alignItems: "center" }} />
-        <CardActions />
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="left">Id</TableCell>
-                <TableCell align="left">Name</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {restaurant?.categories?.map((item) => (
-                <TableRow
-                  key={item.name}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {1}
-                  </TableCell>
-                  <TableCell align="left">{item.name}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+      <Card>
+        <CardHeader title='Food categories' action={<Button startIcon={<Add />} onClick={() => openForm()}>Add</Button>} />
+        <CardContent className='grid gap-3 !pt-0 sm:grid-cols-2 lg:grid-cols-3'>
+          {error && <p className='col-span-full rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-red-300'>{error}</p>}
+          {categories.length === 0 ? (
+            <div className='col-span-full rounded-xl border border-dashed border-white/15 p-8 text-center text-gray-400'>
+              No food categories yet. Create one before adding menu items.
+            </div>
+          ) : categories.map((item) => (
+            <div key={item.id} className='flex items-center justify-between gap-3 rounded-xl border border-white/10 p-4'>
+              <div className='min-w-0'>
+                <p className='truncate font-medium'>{item.name}</p>
+                <p className='mt-1 text-xs text-gray-500'>Category #{item.id}</p>
+              </div>
+              <div className='flex shrink-0'>
+                <IconButton aria-label={`Edit ${item.name}`} disabled={loading} onClick={() => openForm(item)}><EditIcon /></IconButton>
+                <IconButton color='error' aria-label={`Delete ${item.name}`} disabled={loading} onClick={() => handleDelete(item)}><DeleteIcon /></IconButton>
+              </div>
+            </div>
+          ))}
+        </CardContent>
       </Card>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <CreateFoodCategoryForm />
+      <Modal open={open} onClose={() => setOpen(false)} aria-labelledby='food-category-form-title'>
+        <Box sx={modalStyle}>
+          <CreateFoodCategoryForm
+            key={editingCategory?.id || 'new'}
+            category={editingCategory}
+            onSaved={() => setOpen(false)}
+          />
         </Box>
       </Modal>
-
-      {/* <Button onClick={handleOpen}>Open modal</Button> */}
     </Box>
   )
 }

@@ -10,6 +10,17 @@ const initialState = {
     error: null,
 };
 
+const calculateItemsTotal = (items) => items.reduce((total, item) => {
+    const lineTotal = item.totalPrice != null
+        ? Number(item.totalPrice)
+        : Number(item.food?.price || 0) * Number(item.quantity || 0);
+    return total + (Number.isFinite(lineTotal) ? lineTotal : 0);
+}, 0);
+
+const synchronizedCart = (cart, items) => cart
+    ? { ...cart, items, total: calculateItemsTotal(items) }
+    : cart;
+
 const cartReducer = (state = initialState, action) => {
     switch (action.type) {
 
@@ -29,53 +40,68 @@ const cartReducer = (state = initialState, action) => {
         // FIND CART / CLEAR CART
         case actionTypes.FIND_CART_SUCCESS:
         case actionTypes.CLEAR_CART_SUCCESS:
+            {
+                const items = action.payload.items || [];
             return {
                 ...state,
                 loading: false,
-                cart: action.payload,
-                cartItems: action.payload.items || [],
+                cart: synchronizedCart(action.payload, items),
+                cartItems: items,
             };
+            }
 
         // GET ALL CART ITEMS
         case actionTypes.GET_ALL_CART_ITEMS_SUCCESS:
+            {
+                const items = action.payload;
             return {
                 ...state,
                 loading: false,
-                cartItems: action.payload,
+                cart: synchronizedCart(state.cart, items),
+                cartItems: items,
             };
+            }
 
         // ADD ITEM
         case actionTypes.ADD_ITEM_TO_CART_SUCCESS:
+            {
+                const existingItem = state.cartItems.some((item) => item.id === action.payload.id);
+                const items = existingItem
+                    ? state.cartItems.map((item) => item.id === action.payload.id ? action.payload : item)
+                    : [action.payload, ...state.cartItems];
             return {
                 ...state,
                 loading: false,
-                cartItems: [
-                    action.payload,
-                    ...state.cartItems,
-                ],
+                cart: synchronizedCart(state.cart, items),
+                cartItems: items,
             };
+            }
 
         // UPDATE ITEM
         case actionTypes.UPDATE_CARTITEM_SUCCESS:
+            {
+                const items = state.cartItems.map((item) =>
+                    item.id === action.payload.id ? action.payload : item
+                );
             return {
                 ...state,
                 loading: false,
-                cartItems: state.cartItems.map((item) =>
-                    item.id === action.payload.id
-                        ? action.payload
-                        : item
-                ),
+                cart: synchronizedCart(state.cart, items),
+                cartItems: items,
             };
+            }
 
         // REMOVE ITEM
         case actionTypes.REMOVE_CARTITEM_SUCCESS:
+            {
+                const items = state.cartItems.filter((item) => item.id !== action.payload);
             return {
                 ...state,
                 loading: false,
-                cartItems: state.cartItems.filter(
-                    (item) => item.id !== action.payload
-                ),
+                cart: synchronizedCart(state.cart, items),
+                cartItems: items,
             };
+            }
 
         // FAILURES
         case actionTypes.FIND_CART_FAILURE:

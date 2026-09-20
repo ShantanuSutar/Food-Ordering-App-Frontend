@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
 import { createOrder } from '../../State/Order/Action'
+import { updateAddress } from '../../State/Authentication/Action'
 import { addressKey, canonicalAddress, isAddressComplete } from '../util/address'
 import { notifyError, notifySuccess } from '../util/toast'
 import AddressCard from './AddressCard'
@@ -32,10 +33,12 @@ const Cart = () => {
     !restaurantId || cartItems.some((item) => item.food?.restaurant?.id !== restaurantId)
   )
   const checkoutLoading = cart.loading || order.loading
-  const itemTotal = Number(cart.cart?.total ?? cartItems.reduce(
-    (total, item) => total + Number(item.totalPrice || 0),
-    0
-  ))
+  const itemTotal = cartItems.reduce((total, item) => {
+    const lineTotal = item.totalPrice != null
+      ? Number(item.totalPrice)
+      : Number(item.food?.price || 0) * Number(item.quantity || 0)
+    return total + (Number.isFinite(lineTotal) ? lineTotal : 0)
+  }, 0)
 
   const initialValues = useMemo(
     () => addressInitialValues(editingAddress, auth.user?.fullName),
@@ -91,7 +94,7 @@ const Cart = () => {
       isNewAddress: false,
       order: {
         restaurantId,
-        deliveryAddress: canonicalAddress(address),
+        deliveryAddress: address.id != null ? { id: address.id } : canonicalAddress(address),
       },
     }))
   }
@@ -115,10 +118,23 @@ const Cart = () => {
       return
     }
 
+    if (editingAddress?.id) {
+      const updatedAddress = await dispatch(updateAddress({
+        addressId: editingAddress.id,
+        address,
+        jwt: localStorage.getItem('jwt'),
+      }))
+      if (updatedAddress) {
+        closeAddressModal()
+        await createOrderUsingSelectedAddress(updatedAddress)
+      }
+      setSubmitting(false)
+      return
+    }
+
     const result = await dispatch(createOrder({
       jwt: localStorage.getItem('jwt'),
-      isNewAddress: !editingAddress?.id,
-      isUpdatedAddress: Boolean(editingAddress?.id),
+      isNewAddress: true,
       order: { restaurantId, deliveryAddress: address },
     }))
     if (result) closeAddressModal()

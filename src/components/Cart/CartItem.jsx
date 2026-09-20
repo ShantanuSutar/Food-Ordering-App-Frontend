@@ -1,19 +1,17 @@
-import React from 'react'
 import {Chip, IconButton} from '@mui/material'
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { removeCartItem, updateCartItem } from '../../State/Cart/Action';
 const CartItem = ({item}) => {
-    const {auth, cart} = useSelector(store => store)
-    const navigate = useNavigate();
+    const auth = useSelector(store => store.auth)
     const dispatch = useDispatch();
     const jwt = localStorage.getItem("jwt")
 
     const handleUpdateCartItem = (value) => {
         if(value === -1 && item.quantity === 1){
             handleRemoveCartItem();
+            return;
         }    
 
         const data = {cartItemId: item.id, quantity: item.quantity+value}
@@ -28,7 +26,7 @@ const CartItem = ({item}) => {
     <div className=' px-5'>
         <div className=' lg:flex items-center lg:space-x-5'>
             <div>
-                <img className=' w-[5rem] h-[5rem] object-cover' src={item.food.images[0]} alt="" />
+                <img className=' w-[5rem] h-[5rem] object-cover' src={item.food?.images?.[0]} alt={item.food?.name || 'Cart item'} />
             </div>
             <div className=' flex items-center justify-between lg:w-[70%]'>
                 <div className=' space-y-1 lg:space-y-3 w-full'>
@@ -41,7 +39,7 @@ const CartItem = ({item}) => {
                             <div className=' w-5 h-5 text-xs flex items-center justify-center'>
                                 {item.quantity}
                             </div>
-                            <IconButton onClick={() => handleUpdateCartItem(1)}>
+                            <IconButton disabled={item.quantity >= 99} onClick={() => handleUpdateCartItem(1)}>
                                 <AddCircleIcon/>
                             </IconButton>
                         </div>
@@ -51,7 +49,7 @@ const CartItem = ({item}) => {
             </div>
         </div>
         <div className=' pt-3 space-x-2'>
-            {item.ingredients.map((ingredient, i) => <Chip key={i} label={ingredient} />)}
+            {(item.ingredients || []).map((ingredient, index) => <Chip key={`${ingredient}-${index}`} label={ingredient} />)}
         </div>
     </div>
   )

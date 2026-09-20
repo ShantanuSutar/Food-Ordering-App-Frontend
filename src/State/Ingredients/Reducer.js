@@ -14,6 +14,18 @@ import {
     GET_INGREDIENTS_FAILURE,
     UPDATE_STOCK_REQUEST,
     UPDATE_STOCK_FAILURE,
+    UPDATE_INGREDIENT_REQUEST,
+    UPDATE_INGREDIENT_SUCCESS,
+    UPDATE_INGREDIENT_FAILURE,
+    DELETE_INGREDIENT_REQUEST,
+    DELETE_INGREDIENT_SUCCESS,
+    DELETE_INGREDIENT_FAILURE,
+    UPDATE_INGREDIENT_CATEGORY_REQUEST,
+    UPDATE_INGREDIENT_CATEGORY_SUCCESS,
+    UPDATE_INGREDIENT_CATEGORY_FAILURE,
+    DELETE_INGREDIENT_CATEGORY_REQUEST,
+    DELETE_INGREDIENT_CATEGORY_SUCCESS,
+    DELETE_INGREDIENT_CATEGORY_FAILURE,
 } from "./ActionTypes";
 
 const initialState = {
@@ -31,12 +43,20 @@ export const ingredientReducer = (state = initialState, action) => {
         case GET_INGREDIENT_CATEGORY_REQUEST:
         case GET_INGREDIENTS_REQUEST:
         case UPDATE_STOCK_REQUEST:
+        case UPDATE_INGREDIENT_REQUEST:
+        case DELETE_INGREDIENT_REQUEST:
+        case UPDATE_INGREDIENT_CATEGORY_REQUEST:
+        case DELETE_INGREDIENT_CATEGORY_REQUEST:
             return { ...state, loading: true, error: null };
         case CREATE_INGREDIENT_FAILURE:
         case CREATE_INGREDIENT_CATEGORY_FAILURE:
         case GET_INGREDIENT_CATEGORY_FAILURE:
         case GET_INGREDIENTS_FAILURE:
         case UPDATE_STOCK_FAILURE:
+        case UPDATE_INGREDIENT_FAILURE:
+        case DELETE_INGREDIENT_FAILURE:
+        case UPDATE_INGREDIENT_CATEGORY_FAILURE:
+        case DELETE_INGREDIENT_CATEGORY_FAILURE:
             return { ...state, loading: false, error: action.payload };
         case GET_INGREDIENTS:
             return {
@@ -63,6 +83,7 @@ export const ingredientReducer = (state = initialState, action) => {
                 ingredients: [...state.ingredients, action.payload],
             };
         case UPDATE_STOCK:
+        case UPDATE_INGREDIENT_SUCCESS:
             return {
                 ...state,
                 loading: false,
@@ -71,6 +92,34 @@ export const ingredientReducer = (state = initialState, action) => {
                     item.id === action.payload.id ? action.payload : item
                 ),
             };
+        case DELETE_INGREDIENT_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                ingredients: state.ingredients.filter((item) => item.id !== action.payload),
+            };
+        case UPDATE_INGREDIENT_CATEGORY_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                category: state.category.map((item) =>
+                    item.id === action.payload.id ? action.payload : item
+                ),
+                ingredients: state.ingredients.map((item) =>
+                    item.category?.id === action.payload.id
+                        ? { ...item, category: action.payload }
+                        : item
+                ),
+            };
+        case DELETE_INGREDIENT_CATEGORY_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                category: state.category.filter((item) => item.id !== action.payload),
+            };
+
+        case "LOGOUT":
+            return initialState;
 
         default:
             return state;
