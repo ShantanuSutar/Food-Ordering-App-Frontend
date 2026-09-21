@@ -48,13 +48,16 @@ export const loginUser = (reqData) => async(dispatch) => {
 export const getUser = (jwt) => async(dispatch) => {
     dispatch({type : GET_USER_REQUEST})
     try {
-        const {data} = await api.get(`/api/users/profile`, {
-            headers: {
-                Authorization: `Bearer ${jwt}`
-            }
-        })
-        dispatch({type: GET_USER_SUCCESS, payload: data})
-        return data
+        const config = {
+            headers: { Authorization: `Bearer ${jwt}` }
+        }
+        const [{ data: user }, { data: favourites }] = await Promise.all([
+            api.get(`/api/users/profile`, config),
+            api.get(`/api/users/favourites`, config)
+        ])
+        const hydratedUser = { ...user, favourites }
+        dispatch({type: GET_USER_SUCCESS, payload: hydratedUser})
+        return hydratedUser
     } catch (error) {
         dispatch({type: GET_USER_FAILURE, payload: getApiErrorMessage(error, "Could not load profile")})
         notifyError(error, "Could not load profile", "profile-load");

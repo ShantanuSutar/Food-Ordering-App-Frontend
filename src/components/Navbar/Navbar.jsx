@@ -4,6 +4,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { NavbarSearch } from './NavbarSearch'
+import DineHubMark from '../ui/DineHubMark'
 export const Navbar = () => {
   const auth = useSelector((store) => store.auth)
   const cart = useSelector((store) => store.cart)
@@ -21,7 +22,7 @@ export const Navbar = () => {
     <nav className="sticky top-0 z-[1100] w-full border-b border-slate-400/15 bg-[var(--color-bg)]/92 backdrop-blur-xl">
       <div className="page-shell flex min-h-16 items-center justify-between gap-4">
         <button onClick={() => navigate('/')} className="group flex items-center gap-3 rounded-lg text-left" aria-label="DineHub home">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-500 font-black text-[var(--color-bg)] shadow-[0_6px_18px_rgba(249,115,22,0.22)] transition group-hover:bg-orange-600">D</span>
+          <DineHubMark className="h-9 w-9 shrink-0" />
           <span>
             <span className="block text-xl font-extrabold tracking-tight text-slate-50">Dine<span className="text-orange-500">Hub</span></span>
             <span className="hidden text-[0.65rem] font-medium uppercase tracking-[0.18em] text-slate-400 sm:block">Good food, delivered</span>
