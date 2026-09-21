@@ -1,9 +1,10 @@
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
 import { Field, Formik, Form} from 'formik'
 import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { registerUser } from '../../State/Authentication/Action'
 import * as Yup from 'yup'
+import { safeAuthReturnPath } from './authNavigation'
 
 const initialValues = {
   fullName: "",
@@ -21,10 +22,12 @@ const schema = Yup.object({
 
 const RegisterForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
+  const returnTo = safeAuthReturnPath(location.state?.from)
 
   const handleSubmit = (values) => {
-    return dispatch(registerUser({userData: values, navigate}))
+    return dispatch(registerUser({userData: values, navigate, returnTo}))
   }
   
   return (
@@ -89,7 +92,7 @@ const RegisterForm = () => {
       </Formik>
       <Typography variant='body2' align='center'  sx={{mt: 3}}>
         Already have an account?
-        <Button size='small' onClick={() => navigate("/account/login")}>
+        <Button size='small' onClick={() => navigate("/account/login", { state: { from: returnTo } })}>
           Login
         </Button>
       </Typography>

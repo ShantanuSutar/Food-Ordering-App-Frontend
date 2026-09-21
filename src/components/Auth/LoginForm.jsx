@@ -1,9 +1,10 @@
 import { Button, TextField, Typography } from '@mui/material'
 import { Field, Formik, Form} from 'formik'
 import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { loginUser } from '../../State/Authentication/Action'
 import * as Yup from 'yup'
+import { safeAuthReturnPath } from './authNavigation'
 
 const initialValues = {
   email : "",
@@ -15,10 +16,12 @@ const schema = Yup.object({
 })
 const LoginForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
+  const returnTo = safeAuthReturnPath(location.state?.from)
 
   const handleSubmit = (values) => {
-    return dispatch(loginUser({userData: values, navigate}))
+    return dispatch(loginUser({userData: values, navigate, returnTo}))
   }
 
   return (
@@ -58,7 +61,7 @@ const LoginForm = () => {
       </Formik>
       <Typography variant='body2' align='center'  sx={{mt: 3}}>
         New to DineHub?
-        <Button size='small' onClick={() => navigate("/account/register")}>
+        <Button size='small' onClick={() => navigate("/account/register", { state: { from: returnTo } })}>
           Register
         </Button>
       </Typography>

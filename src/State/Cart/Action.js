@@ -91,6 +91,13 @@ export const addItemToCart = (reqData) => {
     return async (dispatch) => {
         dispatch({ type: ADD_ITEM_TO_CART_REQUEST });
 
+        if (!reqData.token) {
+            const message = "Please sign in to add items to your cart";
+            dispatch({ type: ADD_ITEM_TO_CART_FAILURE, payload: message });
+            notifyError(null, message, "cart-auth");
+            return null;
+        }
+
         try {
             const { data } = await api.put(
                 "/api/cart/add",
@@ -107,6 +114,7 @@ export const addItemToCart = (reqData) => {
                 payload: data,
             });
             notifySuccess("Added to cart", `cart-add-${reqData.cartItem?.foodId || "item"}`);
+            return data;
         } catch (error) {
             const message = getApiErrorMessage(error, "Could not add to cart");
             dispatch({
@@ -114,6 +122,7 @@ export const addItemToCart = (reqData) => {
                 payload: message,
             });
             notifyError(error, "Could not add to cart", `cart-add-${reqData.cartItem?.foodId || "item"}`);
+            return null;
         }
     };
 };

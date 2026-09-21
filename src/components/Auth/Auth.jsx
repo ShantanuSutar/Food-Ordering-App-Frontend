@@ -3,14 +3,13 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { addressModalStyle as style } from "../Cart/modalStyle"
 import RegisterForm from './RegisterForm';
 import LoginForm from './LoginForm';
+import { safeAuthReturnPath } from './authNavigation';
 
 
 const Auth = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const handleOnClose = () => [
-        navigate("/")
-    ]
+    const handleOnClose = () => navigate(safeAuthReturnPath(location.state?.from))
 
   return (
     <div>

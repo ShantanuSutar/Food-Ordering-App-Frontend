@@ -4,11 +4,16 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { categorizeIngredients } from '../util/categorizeIngredients';
 import { useDispatch } from 'react-redux';
 import { addItemToCart } from '../../State/Cart/Action';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { notifyError } from '../util/toast';
+import { currentReturnPath } from '../Auth/authNavigation';
 
 const MenuCard = ({ item }) => {
 
   const [selectedIngredients, setSelectedIngredients] = useState([])
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleCheckBoxChange = (itemName) => {
     if(selectedIngredients.includes(itemName)){
@@ -21,8 +26,14 @@ const MenuCard = ({ item }) => {
 
   const handleAddItemToCart = (e) => {
     e.preventDefault();
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      notifyError(null, "Please sign in to add items to your cart", "cart-auth");
+      navigate('/account/login', { state: { from: currentReturnPath(location) } });
+      return;
+    }
     const reqData = {
-      token: localStorage.getItem("jwt"),
+      token,
       cartItem:{  
         foodId: item.id,
         quantity: 1,

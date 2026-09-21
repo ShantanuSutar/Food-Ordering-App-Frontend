@@ -2,6 +2,7 @@ import axios from "axios"
 import { ADD_TO_FAVOURITE_FAILURE, ADD_TO_FAVOURITE_REQUEST, ADD_TO_FAVOURITE_SUCCESS, ADDRESS_FAILURE, ADDRESS_REQUEST, ADDRESS_SUCCESS, GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS } from "./ActionTypes"
 import { api, API_URL } from "../../components/config/api";
 import { getApiErrorMessage, notifyError, notifySuccess } from "../../components/util/toast";
+import { safeAuthReturnPath } from "../../components/Auth/authNavigation";
 
 export const registerUser = (reqData) => async(dispatch) => {
     dispatch({type : REGISTER_REQUEST})
@@ -11,7 +12,7 @@ export const registerUser = (reqData) => async(dispatch) => {
         if(data.role === "ROLE_RESTAURANT_OWNER"){
             reqData.navigate("/admin/restaurant")
         }else{
-            reqData.navigate("/")
+            reqData.navigate(safeAuthReturnPath(reqData.returnTo))
         }
         dispatch({type: REGISTER_SUCCESS, payload: data.jwt})
         notifySuccess("Account created", "auth-register");
@@ -32,7 +33,7 @@ export const loginUser = (reqData) => async(dispatch) => {
         if(data.role === "ROLE_RESTAURANT_OWNER"){
             reqData.navigate("/admin/restaurant")
         }else{
-            reqData.navigate("/")
+            reqData.navigate(safeAuthReturnPath(reqData.returnTo))
         }
         dispatch({type: LOGIN_SUCCESS, payload: data.jwt})
         notifySuccess("Welcome back", "auth-login");

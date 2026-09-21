@@ -4,16 +4,19 @@ import Chip from '@mui/material/Chip'
 import IconButton from '@mui/material/IconButton'
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToFavourites } from '../../State/Authentication/Action';
 import { isPresentinFavourites } from '../config/logic';
 import ImageNotSupportedOutlinedIcon from '@mui/icons-material/ImageNotSupportedOutlined'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
+import { notifyError } from '../util/toast'
+import { currentReturnPath } from '../Auth/authNavigation'
 
 export const RestaurantCard = ({ item }) => {
     const [imageFailed, setImageFailed] = useState(false)
     const navigate = useNavigate();
+    const location = useLocation();
     const dispatch = useDispatch();
 
     const jwt = localStorage.getItem("jwt")
@@ -22,6 +25,11 @@ export const RestaurantCard = ({ item }) => {
 
     const handleAddToFavourite = (event) => {
         event.stopPropagation()
+        if (!jwt) {
+            notifyError(null, 'Please sign in to save favourites', 'favourite-auth')
+            navigate('/account/login', { state: { from: currentReturnPath(location) } })
+            return
+        }
         dispatch(addToFavourites({restaurantId: item?.id, jwt}))
     }
     
