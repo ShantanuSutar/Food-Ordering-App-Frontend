@@ -9,15 +9,17 @@ export const CarouselItem = ({ item, onSelect }) => {
     <button
       type="button"
       onClick={onSelect}
-      className="group h-full w-full overflow-hidden rounded-xl border border-slate-400/15 bg-[var(--color-surface)] text-left transition duration-300 hover:-translate-y-1 hover:border-orange-500/45 hover:shadow-[0_16px_34px_rgba(2,6,23,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+      className="group h-full w-full transform-gpu overflow-hidden rounded-xl border border-slate-400/15 bg-[var(--color-surface)] text-left shadow-[0_8px_20px_rgba(2,6,23,0.18)] transition-[transform,border-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-orange-500/45 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
       aria-label={`View ${item.name} at ${item.restaurantName}`}
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-slate-800">
         {showImage ? (
           <img
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            className="h-full w-full transform-gpu object-cover transition-transform duration-300 ease-out group-hover:scale-[1.025]"
             src={item.image}
             alt={item.name}
+            loading="lazy"
+            decoding="async"
             onError={() => setFailedImage(item.image)}
           />
         ) : (

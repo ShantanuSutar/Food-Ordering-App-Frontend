@@ -40,10 +40,10 @@ export const RestaurantCard = ({ item }) => {
     }
     
   return (
-    <Card className='group flex h-full w-full min-w-0 flex-col overflow-hidden transition duration-300 hover:-translate-y-1 hover:border-orange-500/35 hover:shadow-[0_18px_42px_rgba(2,6,23,0.32)]'>
+    <Card className='group flex h-full w-full min-w-0 transform-gpu flex-col overflow-hidden transition-[transform,border-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-orange-500/35'>
         <div onClick={handleNavigateToRestaurant} className={`${item.open ? "cursor-pointer" : "cursor-not-allowed"} relative aspect-[16/10] overflow-hidden bg-slate-800`}>
             {item?.images?.[0] && !imageFailed ? (
-              <img className='h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]' src={item.images[0]} alt={`${item.name} restaurant`} onError={() => setImageFailed(true)} />
+              <img className='h-full w-full transform-gpu object-cover transition-transform duration-300 ease-out group-hover:scale-[1.025]' src={item.images[0]} alt={`${item.name} restaurant`} loading='lazy' decoding='async' onError={() => setImageFailed(true)} />
             ) : (
               <div className='flex h-full items-center justify-center text-slate-500'><ImageNotSupportedOutlinedIcon sx={{ fontSize: 44 }} /></div>
             )}

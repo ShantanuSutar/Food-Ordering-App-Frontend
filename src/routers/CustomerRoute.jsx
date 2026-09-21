@@ -8,11 +8,12 @@ import Auth from '../components/Auth/Auth'
 import { PaymentSuccess } from '../components/PaymentSuccess/PaymentSuccess'
 import { PaymentFailed } from '../components/PaymentSuccess/PaymentFailed'
 import { Search } from '../components/Search/Search'
+import { Footer } from '../components/Footer/Footer'
 const CustomerRoute = () => {
   return (
-    <div className='min-h-svh w-full min-w-0'>
+    <div className='flex min-h-svh w-full min-w-0 flex-col'>
         <Navbar/>
-        <Routes>
+        <div className='min-w-0 flex-1'><Routes>
             <Route path='/' element={<Home />} />
             <Route path='/account/:register' element={<Home />} />
             <Route path='/restaurant/:city/:title/:id' element={<RestaurantDetails />} />
@@ -21,7 +22,8 @@ const CustomerRoute = () => {
             <Route path='/payment/success/:id' element={<PaymentSuccess />} />
             <Route path='/payment/fail' element={<PaymentFailed />} />
             <Route path='/search' element={<Search />} />
-        </Routes>
+        </Routes></div>
+        <Footer />
         <Auth />
     </div>
   )

@@ -38,9 +38,10 @@ export const MultiItemCarousel = ({ items = [], loading = false, error = null })
     },
     [
       Autoplay({
-        delay: 2000,
+        delay: 4500,
         stopOnInteraction: false,
-        stopOnMouseEnter: false,
+        stopOnMouseEnter: true,
+        stopOnFocusIn: true,
       }),
     ]
   );
@@ -111,7 +112,7 @@ export const MultiItemCarousel = ({ items = [], loading = false, error = null })
         ref={emblaRef}
         className="overflow-hidden"
       >
-        <div className="flex">
+        <div className="flex py-2">
           {items.map((item) => (
             <div
               key={item.id}
