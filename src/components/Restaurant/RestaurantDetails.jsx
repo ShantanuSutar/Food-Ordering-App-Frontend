@@ -25,7 +25,7 @@ const RestaurantDetails = () => {
     const jwt = localStorage.getItem("jwt")
 
     const { restaurant, menu } = useSelector(store => store)
-    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState("");
 
     const { id } = useParams();
     const [searchParams] = useSearchParams();
@@ -47,7 +47,7 @@ const RestaurantDetails = () => {
     }, [dispatch, id, jwt])
 
     useEffect(() => {
-        dispatch(getMenuItemsByRestaurantId({ jwt, restaurantId: id, vegetarian: foodType == "vegetarian", nonveg: foodType == "non_vegetarian", seasonal: foodType == "seasonal", foodCategory: selectedCategory }))
+        dispatch(getMenuItemsByRestaurantId({ jwt, restaurantId: id, vegetarian: foodType === "vegetarian", nonveg: foodType === "non_vegetarian", seasonal: foodType === "seasonal", foodCategory: selectedCategory }))
     }, [dispatch, foodType, id, jwt, selectedCategory])
 
     useEffect(() => {
@@ -139,6 +139,7 @@ const RestaurantDetails = () => {
                                 <RadioGroup name='food_category'
                                     value={selectedCategory}
                                     onChange={handleFilterCategory}>
+                                    <FormControlLabel value="" control={<Radio />} label="All categories" />
                                     {restaurant?.categories?.map((item) => <FormControlLabel key={item.id} value={item.name} control={<Radio />} label={item.name} />)}
                                 </RadioGroup>
                             </FormControl>

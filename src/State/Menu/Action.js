@@ -76,21 +76,22 @@ export const getMenuItemsByRestaurantId = (reqData) => {
         });
 
         try {
-
-            let url =
-                `/api/food/restaurant/${reqData.restaurantId}` +
-                `?vegetarian=${reqData.vegetarian}` +
-                `&nonveg=${reqData.nonveg}` +
-                `&seasonal=${reqData.seasonal}`;
-
-            if (reqData.foodCategory) {
-                url += `&food_category=${reqData.foodCategory}`;
-            }
-
-            const config = reqData.jwt
-                ? { headers: { Authorization: `Bearer ${reqData.jwt}` } }
-                : {};
-            const { data } = await api.get(url, config);
+            const foodCategory = reqData.foodCategory?.trim();
+            const config = {
+                params: {
+                    vegetarian: Boolean(reqData.vegetarian),
+                    nonveg: Boolean(reqData.nonveg),
+                    seasonal: Boolean(reqData.seasonal),
+                    ...(foodCategory && { foodCategory })
+                },
+                ...(reqData.jwt && {
+                    headers: { Authorization: `Bearer ${reqData.jwt}` }
+                })
+            };
+            const { data } = await api.get(
+                `/api/food/restaurant/${reqData.restaurantId}`,
+                config
+            );
 
             dispatch({
                 type: GET_MENU_ITEMS_BY_RESTAURANT_ID_SUCCESS,
